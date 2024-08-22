@@ -1,0 +1,336 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-float infinite 3s ease-in-out;
+  }
+}
+
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.App-link {
+  color: rgb(112, 76, 182);
+}
+
+@keyframes App-logo-float {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Class creates */
+.text-app {
+  color: #068798
+}
+
+.text-app-card {
+  color: #32A6A6
+}
+
+.text-danger {
+  color: #ff0000;
+}
+
+.text-warning {
+  color: #feb700;
+}
+
+.text-success {
+  color: #54a900;
+}
+
+.texto-info {
+  color: #068798;
+}
+
+.text-gray-medium {
+  color: #747474;
+}
+
+.text-gray {
+  color: #5c5c5c;
+}
+
+.text-white {
+  color: #ffff;
+}
+
+.text-blue {
+  color: #0F56B3;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.text-justify {
+  text-align: justify !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.font-size-0-875rem {
+  font-size: 0.875 !important;
+  line-height: 1.4 !important;
+}
+
+.font-size-2rem {
+  font-size: 2rem !important;
+}
+
+.font-size-2-5rem {
+  font-size: 2.5rem !important;
+}
+
+.flex-box-items-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.flex-box {
+  display: flex;
+}
+
+.items-center-vert {
+  align-items: center;
+}
+
+.items-left {
+  justify-content: flex-start !important;
+}
+
+.items-center {
+  justify-content: center !important;
+}
+
+.items-rith {
+  justify-content: flex-end !important;
+}
+
+.items-start {
+  align-items: flex-start !important;
+}
+
+.items-mei {
+  align-items: center !important;
+}
+
+.items-end {
+  align-items: flex-end !important;
+}
+
+.items-item:hover {
+  background-color: #d6d2e0;
+  cursor: pointer;
+}
+
+/* Class DataGrid */
+
+.header-datagrid-prof {
+  background: #EBE9F4;
+  color: #818181;
+  border-radius: 5px;
+  font-family: 'Arial';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  display: flex;
+  align-items: center;
+  border-style: hidden !important;
+  border-spacing: 50px !important;
+}
+
+.buttonUpload {
+  color: #818181;
+  background: #EBE9F4;
+  width: 150px !important;
+  height: 10px !important;
+}
+
+.homeCardSchedule {
+  /* align-items: center !important; */
+  text-align: left !important;
+  justify-content: left !important;
+  margin-left: 50px;
+  margin-top: 5px;
+}
+
+.homeCardScheduleLink {
+  text-align: right !important;
+  justify-content: right !important;
+  margin-right: 15px;
+}
+
+.resultDetailsSkill {
+  /* align-items: center !important; */
+  text-align: left !important;
+  justify-content: left !important;
+  text-indent: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.resultProcedureGrant {
+  /* align-items: center !important; */
+  text-align: center !important;
+  justify-content: center !important;
+  text-indent: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.chartDetailSkill {
+  text-align: center !important;
+  justify-content: left !important;
+  text-indent: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+
+}
+
+.tableHeader {
+  background: #EBE9F4;
+  color: #818181;
+  border-radius: 5px;
+  font-family: 'Arial';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  display: flex;
+  align-items: center;
+  border-style: hidden !important;
+  border-spacing: 50px !important;
+}
+
+.tableBody {
+  background: #F2F2F2;
+  border: 1px solid white !important;
+}
+
+.paperFilters {
+  text-indent: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #EBE9F4;
+  color: #818181 !important;
+}
+
+.buttonPaperFilters {
+  text-indent: 15px;
+  margin-top: 15px;
+  margin-left: 15px;
+ }
+
+/* CSS para a div de busca */
+.search-container {
+  margin-bottom: 50px;
+}
+
+/* Estilo para o componente de busca */
+.search-container .MuiTextField-root {
+  margin-bottom: 0px;
+  width: 100%;
+}
+
+/* Estilo para os itens da lista */
+.search-container .MuiList-root {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Estilo para cada item da lista */
+.search-container .MuiListItem-root {
+  padding: 8px 16px;
+  transition: background-color 0.2s;
+  color: black;
+}
+
+.search-container .MuiListItem-root:hover {
+  background-color: #f5f5f5;
+}
+
+/* Estilo para o texto do item da lista */
+.search-container .MuiListItemText-primary {
+  font-weight: bold;
+  color: black;
+}
+
+/* Estilo para o link no item da lista */
+.search-container .MuiListItem-button {
+  text-align: left;
+  width: 100%;
+  text-decoration: none;
+  color: black;
+}
+
+.search-container .MuiListItem-button:hover {
+  text-decoration: underline;
+  color: black;
+}
+
+/* CSS para o componente de notificações */
+.notification-container {
+  display: inline-block;
+}
+
+.notification-item:hover {
+  background-color: #EBE9F4; /* Altere a cor conforme desejado */
+  cursor: pointer;
+}
+
+.unread-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: red;
+  margin-left: 12px;
+}
+
+/* CSS para o componente de chat */
+.chat-container {
+  display: inline-block;
+}
+
+.chat-item:hover {
+  background-color: #EBE9F4; /* Altere a cor conforme desejado */
+  cursor: pointer;
+}

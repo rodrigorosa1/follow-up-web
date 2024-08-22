@@ -1,0 +1,69 @@
+.fc-toolbar {
+  background-color: #ffff;
+  color: #5c5c5c;
+}
+
+.fc-toolbar-title {
+  color: #5c5c5c !important;
+}
+
+.btn-group button {
+  background-color: #ffff;
+  border-color: #068798;
+  color: #068798;
+}
+
+.btn-group button:hover,
+.btn-group button:active,
+.btn-group button.btn-group-active {
+  background-color: #46b8da;
+  border-color: #a7a7a7;
+}
+
+.fc-today-button {
+  background-color: #068798 !important;
+  border-color: #46b8da;
+  color: #fff;
+}
+
+.fc-create-button {
+  background-color: #068798;
+  border-color: #46b8da;
+  color: #fff;
+}
+
+.fc-create-button button:hover {
+  background-color: #46b8da;
+  border-color: #a7a7a7;
+}
+
+.fc-timeGridDay-button.btn.btn-primary.active {
+  background-color: #068798 !important;
+  border-color: #068798;
+  color: #fff;
+}
+
+.fc-timeGridWeek-button.btn.btn-primary.active {
+  background-color: #068798 !important;
+  border-color: #068798;
+  color: #fff;
+}
+
+.fc-listWeek-button.btn.btn-primary.active {
+  background-color: #068798 !important;
+  border-color: #068798 !important;
+  color: #fff !important;
+}
+
+.fc-day-today {
+  background-color: #F2F2F2 !important;
+}
+
+.fc-day-today.fc-daygrid-day {
+  background-color: #F2F2F2 !important;
+}
+
+.fc-day-today.fc-timegrid-col {
+  background-color: #F2F2F2 !important;
+}
+
