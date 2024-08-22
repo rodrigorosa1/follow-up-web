@@ -331,11 +331,11 @@ export const ScheduleBasic = () => {
                                     tabIndex={-1}
                                     disableRipple
                                     inputProps={{
-                                        'aria-labelledby': value.name,
+                                        'aria-labelledby': value.objective,
                                     }}
                                 />
                             </ListItemIcon>
-                            <ListItemText id={value.id} primary={value.name} />
+                            <ListItemText id={value.id} primary={value.objective} />
                         </ListItemButton>
                     );
                 })}
