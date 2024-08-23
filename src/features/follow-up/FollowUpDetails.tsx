@@ -173,7 +173,7 @@ export const FollowUpDetais = () => {
                                                 <Paper elevation={2} sx={{ marginTop: 5 }}>
                                                     <React.Fragment>
                                                         <Grid container>
-                                                            <Grid item xs={6} md={4} lg={4} >
+                                                            <Grid item xs={6} md={3} lg={3} >
                                                                 <div className='resultDetailsSkill'>
                                                                     <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
                                                                         Objetivo
@@ -183,7 +183,7 @@ export const FollowUpDetais = () => {
                                                                     </Typography>
                                                                 </div>
                                                             </Grid>
-                                                            <Grid item xs={6} md={3} lg={3}>
+                                                            <Grid item xs={6} md={4} lg={4}>
                                                                 <div className='resultDetailsSkill'>
                                                                     <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
                                                                         Descrição
