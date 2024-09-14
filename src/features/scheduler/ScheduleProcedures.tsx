@@ -20,7 +20,7 @@ export const ScheduleProcedures = () => {
     const [dataLoaded, setDataLoaded] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
-    const [snackbarError, setSnackbarError] = React.useState(false);
+    const [snackbarError] = React.useState(false);
     const [selectedProcedure, setSelectedProcedure] = React.useState<IProcedure | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isPrcModal, setIsPrcModal] = React.useState(false);
@@ -60,6 +60,7 @@ export const ScheduleProcedures = () => {
 
     const handleSkillSelected = (event: any) => {
         const skill = event.target.value;
+        setProcedures([]);
         setSelectedSkill(skill);
         getProceduresSchedule(skill.schedule_id, skill.skill_id);
         getProceduresAll(skill.skill_id);

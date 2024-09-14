@@ -15,7 +15,6 @@ import { ComponetScheduler } from './features/scheduler/Scheduler';
 import { SkillsDetails } from './features/skills/SkillsDetails';
 import { Skills } from './features/skills/Skills';
 import { Configurations } from './components/pages/Configurations';
-import { Specialty } from './features/configurations/Specialty';
 import { User } from './features/configurations/User';
 import { Profile } from './features/auth/Profile';
 import { FollowUp } from './features/follow-up/FollowUp';
@@ -26,6 +25,8 @@ import { Recovery } from './features/auth/Recovery';
 import { PageSuccess } from './components/pages/PageSuccess';
 import { PrivacyPolity } from './components/pages/PrivacyPolity';
 import { ScheduleDetails } from './features/scheduler/ScheduleDetails';
+import { Finances } from './components/pages/Finances';
+import { Specialty } from './features/specialty/Specialty';
 
 
 const App: React.FC = () => {
@@ -75,11 +76,12 @@ const App: React.FC = () => {
               <Route path='/follow-up/:id' element={<FollowUpDetais />} />
 
               <Route path='/configurations' element={<Configurations />} />
-              <Route path='/configurations/specialtys' element={<Specialty />} />
               <Route path='/configurations/users' element={<User />} />
 
               <Route path='/profile' element={<Profile />} />
-              <Route path='/financial' element={<Login />} />
+              <Route path='/finance' element={<Finances />} />
+              <Route path='/finance/payments' element={<Finances />} />
+              <Route path='/finance/specialties' element={<Specialty />} />
             </Route>
           </Routes>
         </Layout>

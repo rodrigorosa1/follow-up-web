@@ -1,6 +1,6 @@
-import { Alert, Box, Card, Fab, Grid, IconButton, LinearProgress,  Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import * as React from "react"
+import { Alert, Box, Card, Fab, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useState } from "react";
 import { getProcedures, getSkillslId, postSkills, updateSkills } from "../../services/skill.service";
 import { useFormik } from "formik";
 import { ReplyRounded, Save } from "@mui/icons-material";
@@ -9,24 +9,28 @@ import { HiPencilSquare, HiOutlineArchiveBoxXMark } from "react-icons/hi2";
 import IProcedure from "../../types/procedure.type";
 import { ModalProcedure } from "../procedures/ModalProcedure";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
+import { getSpecialties } from "../../services/specialty.service";
+import ISpecialty from "../../types/specialty.type";
 
 
 export const SkillsDetails = () => {
     const initial = {
         name: '',
+        specialty_id: '',
         objective: '',
     }
 
     let navigate: NavigateFunction = useNavigate();
     const { id } = useParams();
-    const [dataForm, setDataForm] = useState(initial);
-    const [procedures, setProcedures] = useState<any[]>([]);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarError, setSnackbarError] = useState(false);
-    const [dataLoaded, setDataLoaded] = useState(false);
-    const [selectedProcedure, setSelectedProcedure] = useState<IProcedure | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [dataForm, setDataForm] = React.useState(initial);
+    const [procedures, setProcedures] = React.useState<IProcedure[]>([]);
+    const [specialties, setSpecialties] = React.useState<ISpecialty[]>([]);
+    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [snackbarMessage, setSnackbarMessage] = React.useState('');
+    const [snackbarError, setSnackbarError] = React.useState(false);
+    const [dataLoaded, setDataLoaded] = React.useState(true);
+    const [selectedProcedure, setSelectedProcedure] = React.useState<IProcedure | null>(null);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
 
 
     const handlePrcdClick = (procedure: IProcedure) => {
@@ -57,7 +61,14 @@ export const SkillsDetails = () => {
             const prcds = await getProcedures(id);
             setProcedures(prcds);
         }
+        setDataLoaded(false);
     };
+
+    const specialtyList = async () => {
+        const list = await getSpecialties();
+        setSpecialties(list);
+
+    }
 
     const historyBack = () => {
         navigate("/skills");
@@ -106,14 +117,19 @@ export const SkillsDetails = () => {
 
     const initialEditValues = (values: any) => {
         const initial = {
+            specialty_id: values.specialty_id,
             name: values.name,
             objective: values.objective,
         }
         return initial;
     }
 
-    useEffect(() => {
+    React.useEffect(() => {
         getSkill();
+    }, []);
+
+    React.useEffect(() => {
+        specialtyList();
     }, []);
 
 
@@ -154,16 +170,41 @@ export const SkillsDetails = () => {
                         <Box>
                             <Grid container rowSpacing={5}>
                                 <Grid item xl={10} lg={10} md={10} sm={10} xs={10} sx={{ m: 2 }}>
+                                    <InputLabel>Especialidade</InputLabel>
+                                    <Select
+                                        label="Especialidade"
+                                        id="specialty_id"
+                                        name="specialty_id"
+                                        value={formik.values.specialty_id}
+                                        onChange={formik.handleChange}
+                                        fullWidth
+                                        required
+                                        size="small"
+                                    >
+                                        {
+                                            specialties.map((specialty: any) => {
+                                                return <MenuItem key={specialty.id} value={specialty.id}>
+                                                    {specialty.name}
+                                                </MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                        <Box>
+                            <Grid container rowSpacing={5}>
+                                <Grid item xl={10} lg={10} md={10} sm={10} xs={10} sx={{ m: 2 }}>
                                     <TextField
                                         id="name"
                                         name="name"
                                         label="Nome"
-                                        size="small"
                                         value={formik.values.name}
                                         onChange={formik.handleChange}
                                         fullWidth
                                         margin="normal"
                                         required
+                                        size="small"
                                     />
                                 </Grid>
                             </Grid>
@@ -176,11 +217,11 @@ export const SkillsDetails = () => {
                                         name="objective"
                                         label="Descrição"
                                         multiline
-                                        size="small"
                                         rows={2}
                                         value={formik.values.objective}
                                         onChange={formik.handleChange}
                                         fullWidth
+                                        size="small"
                                     />
                                 </Grid>
                             </Grid>

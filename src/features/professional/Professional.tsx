@@ -173,7 +173,6 @@ export const Professional = () => {
                             <TableRow>
                                 <TableCell>Profissional</TableCell>
                                 <TableCell>Telefone</TableCell>
-                                <TableCell>Especialidade</TableCell>
                                 <TableCell>Situação</TableCell>
                             </TableRow>
                         </TableHead>
@@ -195,7 +194,6 @@ export const Professional = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>{row.phone}</TableCell>
-                                    <TableCell>{row.specialty_name}</TableCell>
                                     <TableCell>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <IconButton>

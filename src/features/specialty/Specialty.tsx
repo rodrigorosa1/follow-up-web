@@ -1,22 +1,30 @@
-import { useEffect, useState } from "react";
+import * as React from "react";
+import ISpecialty from "../../types/specialty.type";
 import AddIcon from '@mui/icons-material/Add';
-import { HiPencilSquare, HiOutlineArchiveBoxXMark } from "react-icons/hi2";
-import { specialityList } from '../../services/configuration.service';
-import { Alert, Box, Breadcrumbs, Fab, Grid, IconButton, Link, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { ModalSpecialty } from './ModalSpecialty';
-import Ispecialty from '../../types/specialty.type';
+import { Alert, Box, Fab, Grid, IconButton, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { HiPencilSquare } from "react-icons/hi2";
+import { getSpecialties } from "../../services/specialty.service";
+import { ModalSpecialty } from "./ModalSpecialty";
+import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
+import { formatCurrency } from "../../helpers/currency";
+
 
 
 export const Specialty = () => {
+    const [specialties, setSpecialties] = React.useState<ISpecialty[]>([]);
+    const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [snackbarMessage] = React.useState('');
+    const [snackbarError] = React.useState(false);
+    const [selectedSpecialty, setSelectedSpecialty] = React.useState<ISpecialty | null>(null);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-    const [specialities, setSpeciality] = useState<any[]>([]);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarError, setSnackbarError] = useState(false);
-    const [selectedSpecialty, setSelectedSpecialty] = useState<Ispecialty | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const listSpecialties = async () => {
+        const specialty = await getSpecialties();
 
-    const handleUserClick = (specialty: Ispecialty) => {
+        setSpecialties(specialty);
+    }
+
+    const handleClick = (specialty: ISpecialty) => {
         setSelectedSpecialty(specialty);
         setIsModalOpen(true);
     };
@@ -28,13 +36,8 @@ export const Specialty = () => {
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        getSpecialty();
-      };
-
-    const getSpecialty = async () => {
-        const specialty = await specialityList();
-        setSpeciality(specialty);
-    }
+        listSpecialties();
+    };
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -44,10 +47,9 @@ export const Specialty = () => {
         setSnackbarOpen(true);
     };
 
-    useEffect(() => {
-        getSpecialty();
+    React.useEffect(() => {
+        listSpecialties();
     }, []);
-
 
     return (
         <Grid container
@@ -59,18 +61,12 @@ export const Specialty = () => {
         >
             <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
                 <Grid container alignItems="left" justifyContent="left">
-                    <div role="presentation">
-                        <Breadcrumbs aria-label="breadcrumb" separator=">">
-                            <Link
-                                underline="hover"
-                                color="inherit"
-                                href="/configurations"
-                            >
-                                Configurações
-                            </Link>
-                            <Typography color="text.primary">Especialidades</Typography>
-                        </Breadcrumbs>
-                    </div>
+                    <CustomBreadcrumbs
+                        title1="financeiro"
+                        href1="#"
+                        title2="especialidades"
+                        href2="/specialty"
+                    />
                 </Grid>
             </Grid>
             <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
@@ -88,10 +84,11 @@ export const Specialty = () => {
                         isOpen={isModalOpen}
                         onClose={handleCloseModal}
                         onSnackbarOpen={handleSnackbarOpen}
+                        listSpecialties={listSpecialties}
                     />
                 </Grid>
             </Box>
-            <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+            <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 400 }} aria-label="responsáveis" size='small'>
                         <TableHead
@@ -100,31 +97,28 @@ export const Specialty = () => {
                             }}>
                             <TableRow>
                                 <TableCell>Nome</TableCell>
-                                <TableCell align="center"></TableCell>
+                                <TableCell style={{ width: 160 }}>Valor Hora</TableCell>
+                                <TableCell style={{ width: 100 }} align="center"></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {specialities.map((row) => (
+                            {specialties.map((row) => (
                                 <TableRow
                                     key={row.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {row.specialty}
+                                        {row.name}
+                                    </TableCell>
+                                    <TableCell component="th" scope="row">
+                                        {formatCurrency(row.value_hour)}
                                     </TableCell>
                                     <TableCell align="center">
                                         <IconButton>
                                             <HiPencilSquare
                                                 size={18}
                                                 color='grey'
-                                                onClick={() => handleUserClick(row)}
-                                            />
-                                        </IconButton>
-                                        <IconButton>
-                                            <HiOutlineArchiveBoxXMark
-                                                size={18}
-                                                color='grey'
-                                            // onClick={() => goDetails(params.row.id)}
+                                                onClick={() => handleClick(row)}
                                             />
                                         </IconButton>
                                     </TableCell>
@@ -158,4 +152,5 @@ export const Specialty = () => {
         </Grid>
 
     );
+
 }

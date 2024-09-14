@@ -62,8 +62,8 @@ export const ModalProcedure: React.FC<ModalProcedureyProps> = ({ procedure, isOp
                 postProcedures(id, values);
             }
             onSnackbarOpen();
-            getSkill();
             onClose();
+            getSkill();
         }
     });
 
@@ -186,7 +186,7 @@ export const ModalProcedure: React.FC<ModalProcedureyProps> = ({ procedure, isOp
                                 <TextField
                                     id="consequence"
                                     name="consequence"
-                                    label="Consequenica"
+                                    label="Consequência"
                                     multiline
                                     size="small"
                                     rows={2}

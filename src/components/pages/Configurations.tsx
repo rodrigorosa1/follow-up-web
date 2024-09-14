@@ -6,10 +6,6 @@ import { LuUsers, LuBuilding } from "react-icons/lu";
 export const Configurations = () => {
     let navigate: NavigateFunction = useNavigate();
 
-    const goSpecialty = () => {
-        navigate('/configurations/specialtys')
-    };
-
     const goUser = () => {
         navigate('/configurations/users')
     };
@@ -24,11 +20,11 @@ export const Configurations = () => {
             alignItems="center"
             rowSpacing={5}
         >
-             <Grid item xl={3} lg={3} md={3} sm={3} xs={3} mr={3}>
+            <Grid item xl={3} lg={3} md={3} sm={3} xs={3} mr={3}>
                 <IconButton sx={{
-                    width: 350,
-                    height: 350,
-                    color: 'black'
+                    width: 250,
+                    height: 250,
+                    color: '#615f63'
                 }}
                 // onClick={goCompany}
                 >
@@ -40,14 +36,13 @@ export const Configurations = () => {
                     </Box>
                 </IconButton>
             </Grid>
-           
             <Grid item xl={3} lg={3} md={3} sm={3} xs={3} mr={3}>
                 <IconButton sx={{
-                    width: 350,
-                    height: 350,
-                    color: 'black'
+                    width: 250,
+                    height: 250,
+                    color: '#615f63'
                 }}
-                onClick={goUser}
+                    onClick={goUser}
                 >
                     <Box>
                         <LuUsers
@@ -57,7 +52,7 @@ export const Configurations = () => {
                     </Box>
                 </IconButton>
             </Grid>
-       </Grid>
+        </Grid>
 
     );
 }

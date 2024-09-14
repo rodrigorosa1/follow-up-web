@@ -1,6 +1,5 @@
 export default interface IProcedure {
   id?: string,
-  company_id?: string | null,
   skill_id? : string | null,
   skill_name?: string | null,
   tries: string,

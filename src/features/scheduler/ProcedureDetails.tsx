@@ -61,8 +61,8 @@ export const ProcedureDetails: React.FC<ModalProcedureProps> = ({ procedure, isO
                 updateEventProcedures(procedure.id, values);
             }
             onSnackbarOpen();
-            getSkill();
             onClose();
+            getSkill();
         }
     });
 

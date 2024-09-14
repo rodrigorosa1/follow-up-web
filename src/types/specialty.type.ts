@@ -1,6 +1,6 @@
-export default interface Ispecialty {
-  id?: string | null,
-  company_id?: string | null,
-  specialty: string,
-
+export default interface ISpecialty {
+    id?: string | null;
+    name: string;
+    description: string | null;
+    value_hour: number;
 }

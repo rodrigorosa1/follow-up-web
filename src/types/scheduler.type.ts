@@ -8,6 +8,7 @@ export interface IEvent {
     id?: string;
     event_id?: string;
     title?: string;
+    specialty_id?: string;
     skill_id?: string;
     student_id: string;
     instructor_id: string;
