@@ -96,7 +96,6 @@ export const StudentAddress = () => {
         initialValues: dataForm,
         onSubmit: (values) => {
             if (id) {
-                console.log(idAddress)
                 if (idAddress) {
                     upStudentsAddress(idAddress, values).then((r) => {
                         if (r.id) {

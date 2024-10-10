@@ -188,6 +188,7 @@ export const ScheduleBasic = () => {
             const event: IEvent = {
                 student_id: response.student_id,
                 instructor_id: response.instructor_id,
+                specialty_id: response.specialty_id,
                 event_id: response.event_id,
                 start: new Date(response.start).toISOString().split('T')[0],
                 end: new Date(response.end).toISOString().split('T')[0],

@@ -1,4 +1,4 @@
-import { Box, Breadcrumbs, Card, Grid, Link } from "@mui/material";
+import { Box, Card, Grid } from "@mui/material";
 import React from "react";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -8,6 +8,7 @@ import { ProfessionalBasic } from "./ProfessionalBasic";
 import { ProfessionalAddress } from "./ProfessionalAddress";
 import { useParams } from "react-router-dom";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
+import { ProfessionalPayment } from "./ProfessionalPayment";
 
 
 export const FormProfessional = () => {
@@ -58,12 +59,10 @@ export const FormProfessional = () => {
                                     )}
 
                                     {id ? (
-                                        <Tab label="Dados de pagamento" value="3" disabled />
+                                        <Tab label="Dados de pagamento" value="3" />
                                     ) : (
                                         <Tab label="Dados de pagamento" value="3" disabled />
                                     )}
-
-
                                 </TabList>
                             </Box>
                             <TabPanel value="1">
@@ -73,7 +72,7 @@ export const FormProfessional = () => {
                                 <ProfessionalAddress />
                             </TabPanel>
                             <TabPanel value="3">
-                                Em desenvolvimento
+                                <ProfessionalPayment />
                             </TabPanel>
                         </TabContext>
                     </Box>

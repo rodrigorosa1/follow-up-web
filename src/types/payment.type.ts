@@ -9,15 +9,24 @@ export interface IPayament {
     date_due: Date,
     date_scheduled: Date | null,
     schedule: IEvent[],
-    instructor: IProfessional[],
+    instructor: IProfessional,
     status?: string
 }
 
 export interface IPaymentResume {
     schedule_id: string,
     instructor_id: string,
+    fullname: string,
+    social_name: string,
+    specialty: string,
+    status: string
     count: number,
-    totoal: number,
-    schedule: IEvent[],
-    instructor: IProfessional[],
+    total: number,
+}
+
+export interface IBank {
+    ispb: string,
+    name: string,
+    code: string,
+    fullName: string,
 }

@@ -27,6 +27,8 @@ import { PrivacyPolity } from './components/pages/PrivacyPolity';
 import { ScheduleDetails } from './features/scheduler/ScheduleDetails';
 import { Finances } from './components/pages/Finances';
 import { Specialty } from './features/specialty/Specialty';
+import { Payments } from './features/finance/payments/Payments';
+import { PaymentListProfessional } from './features/finance/payments/PaymentListProfessional';
 
 
 const App: React.FC = () => {
@@ -80,7 +82,8 @@ const App: React.FC = () => {
 
               <Route path='/profile' element={<Profile />} />
               <Route path='/finance' element={<Finances />} />
-              <Route path='/finance/payments' element={<Finances />} />
+              <Route path='/finance/payments' element={<Payments />} />
+              <Route path='/finance/payments/:instructor_id' element={<PaymentListProfessional />} />
               <Route path='/finance/specialties' element={<Specialty />} />
             </Route>
           </Routes>

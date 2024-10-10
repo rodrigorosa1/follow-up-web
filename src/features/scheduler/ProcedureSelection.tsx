@@ -50,7 +50,6 @@ export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedul
         enableReinitialize: true,
         initialValues: initial,
         onSubmit: (values) => {
-            console.log(values);
             onSnackbarOpen();
             addEventsProcedures(schedule_id, values);
             getSkill();

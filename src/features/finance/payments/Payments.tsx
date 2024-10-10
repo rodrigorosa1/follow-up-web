@@ -1,22 +1,36 @@
 import * as React from "react";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-import { IPaymentResume } from "../../types/payment.type";
+import { IPaymentResume } from "../../../types/payment.type";
 import { FilterAltSharp, Search } from "@mui/icons-material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useFormik } from "formik";
 import { HiEye, } from "react-icons/hi2";
-import { resumePayments } from "../../services/payment.service";
-import { FormControl, FormLabel, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
-import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
+import { resumePayments } from "../../../services/payment.service";
+import { Autocomplete, FormControl, FormLabel, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
+import { CustomBreadcrumbs } from "../../../components/layout/Breadcrumbs";
 import dayjs from "dayjs";
+import { formatCurrency } from "../../../helpers/currency";
+import { getProfessionals } from "../../../services/professional.service";
+import { IProfessional } from "../../../types/professional.type";
 
+interface IPayload {
+    status: string | null,
+    start: string | null,
+    end: string | null,
+}
 
 export const Payments = () => {
     let navigate: NavigateFunction = useNavigate();
     const [payments, setPayments] = React.useState<IPaymentResume[]>([]);
+    const [professionals, setProfessionals] = React.useState<IProfessional[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [dataDetails, setDataDetails] = React.useState<IPayload>();
+
+    const goDetails = (instructor_id: string) => {
+        navigate('/finance/payments/' + instructor_id, { state: { dataDetails } });
+    };
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -32,6 +46,7 @@ export const Payments = () => {
         const formattedStart = new Date(form.start).toISOString().split('T')[0];
         const formattedEnd = new Date(form.end).toISOString().split('T')[0];
         const data = {
+            instructor_id: form.professional.id,
             status: status,
             start: formattedStart,
             end: formattedEnd
@@ -39,12 +54,43 @@ export const Payments = () => {
         return data;
     }
 
+    const listProfessionals = async () => {
+        const list = await getProfessionals();
+        setProfessionals(list);
+    }
+
+    const defaultProps = {
+        options: professionals,
+        getOptionLabel: (option: any) => option.fullname,
+    };
+
+    const startResume = async () => {
+        const payload = {
+            status: "PREVISTO",
+            start: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
+            end: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString().split('T')[0]
+        }
+        const payments = await resumePayments(payload);
+        setDataDetails(payload);
+        setPayments(payments);
+    }
+
+    React.useEffect(() => {
+        startResume();
+    }, []);
+
+    React.useEffect(() => {
+        listProfessionals();
+    }, []);
+
+
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            student: null,
-            start: null,
-            end: null
+            professional: null,
+            status: "PREVISTO",
+            start: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
+            end: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString().split('T')[0]
         },
         onSubmit: async (values) => {
             const payload = formatPayload(values);
@@ -87,15 +133,29 @@ export const Payments = () => {
                                     </Grid>
                                 </Grid>
                                 <Grid container>
-                                    <Grid item xl={4} lg={4} md={4} sm={4} xs={4} sx={{
+                                    <Grid item xl={6} lg={6} md={6} sm={6} xs={6} sx={{
                                         textIndent: 5,
                                         marginTop: 1,
                                         marginLeft: 10,
                                         marginBottom: 2
                                     }}>
+                                        <Autocomplete
+                                            {...defaultProps}
+                                            value={formik.values.professional}
+                                            onChange={(event, newValue) => {
+                                                formik.setFieldValue('professional', newValue);
+                                            }}
+                                            id="professional_id"
+                                            disableCloseOnSelect
 
+                                            renderInput={(params) => (
+                                                <TextField {...params} label="Profssional" variant="standard" />
+                                            )}
+                                        />
                                     </Grid>
-                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2} sx={{
+                                </Grid>
+                                <Grid container>
+                                    <Grid item xl={3} lg={3} md={3} sm={3} xs={3} sx={{
                                         marginLeft: 5,
                                         marginTop: 1,
                                         marginBottom: 1
@@ -108,11 +168,12 @@ export const Payments = () => {
                                                 onChange={(value) => {
                                                     formik.setFieldValue('start', value);
                                                 }}
+                                                slotProps={{ textField: { size: 'small' } }}
                                             />
 
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xl={2} lg={2} md={2} sm={2} xs={2} sx={{
+                                    <Grid item xl={3} lg={3} md={3} sm={3} xs={3} sx={{
                                         marginLeft: 5,
                                         marginTop: 1,
                                         marginBottom: 1
@@ -125,11 +186,33 @@ export const Payments = () => {
                                                 onChange={(value) => {
                                                     formik.setFieldValue('end', value);
                                                 }}
+                                                slotProps={{ textField: { size: 'small' } }}
                                             />
 
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xl={2} lg={2} md={1} sm={1} xs={1}>
+                                    <Grid item xl={3} lg={3} md={3} sm={3} xs={3} sx={{
+                                        marginLeft: 5,
+                                        marginTop: 1,
+                                        marginBottom: 1
+                                    }}>
+                                        <InputLabel>Status</InputLabel>
+                                        <Select
+                                            label="Status"
+                                            id="status"
+                                            name="status"
+                                            value={formik.values.status}
+                                            onChange={formik.handleChange}
+                                            fullWidth
+                                            required
+                                            size="small"
+                                        >
+                                            <MenuItem value={'PREVISTO'} selected>Previsto</MenuItem>
+                                            <MenuItem value={'CONFIRMADO'}>Confirmado</MenuItem>
+                                            <MenuItem value={'FEITO'}>Feito</MenuItem>
+                                        </Select>
+                                    </Grid>
+                                    <Grid item xl={1} lg={1} md={1} sm={1} xs={1}>
                                         <div className="buttonPaperFilters">
                                             <IconButton
                                                 type="submit"
@@ -151,9 +234,8 @@ export const Payments = () => {
                         <TableHead className="tableHeader">
                             <TableRow>
                                 <TableCell>Nome/Razão Social</TableCell>
-                                <TableCell>CNPJ</TableCell>
+                                <TableCell>Tipo</TableCell>
                                 <TableCell>Quantidade</TableCell>
-                                <TableCell>Descrição</TableCell>
                                 <TableCell>Total</TableCell>
                                 <TableCell></TableCell>
                             </TableRow>
@@ -162,26 +244,23 @@ export const Payments = () => {
                             {payments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: any) => (
                                 <TableRow key={row.id}>
                                     <TableCell>
-                                        {row.instructor.fullname}
+                                        {row.fullname} - {row.social_name}
                                     </TableCell>
                                     <TableCell>
-                                        {row.instructor.document_company}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.count}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.total}
+                                        {row.specialty}
                                     </TableCell>
                                     <TableCell>
                                         {row.count}
+                                    </TableCell>
+                                    <TableCell>
+                                        {formatCurrency(row.total)}
                                     </TableCell>
                                     <TableCell align="left">
                                         <IconButton>
                                             <HiEye
                                                 size={20}
                                                 color='grey'
-                                            // onClick={() => goDetails(row.id)}
+                                                onClick={() => goDetails(row.instructor_id)}
                                             />
                                         </IconButton>
                                     </TableCell>
