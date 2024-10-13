@@ -1,9 +1,9 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, MenuItem, Modal, Select, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as React from "react"
-import IProcedure from "../../types/procedure.type";
 import { ReplyOutlined, Save } from "@mui/icons-material";
-import { addEventsProcedures } from "../../services/event.service";
+import { addEventsSkill } from "../../services/event.service";
+import ISkill from "../../types/skill.type";
 
 const style = {
     position: 'absolute',
@@ -21,13 +21,13 @@ const style = {
 interface ModalSelectProps {
     isOpen: boolean;
     schedule_id: string,
-    procedures: IProcedure[];
+    skills: ISkill[];
     onClose: () => void;
     onSnackbarOpen: () => void;
     getSkill: () => void;
 }
 
-export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id, procedures, onClose, onSnackbarOpen, getSkill }) => {
+export const SkillSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id, skills, onClose, onSnackbarOpen, getSkill }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -39,7 +39,7 @@ export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedul
     }
 
     const initial = {
-        procedure_id: ''
+        skill_id: ''
     }
 
     const sender = () => {
@@ -50,9 +50,8 @@ export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedul
         enableReinitialize: true,
         initialValues: initial,
         onSubmit: (values) => {
-            console.log(values);
             onSnackbarOpen();
-            addEventsProcedures(schedule_id, values);
+            addEventsSkill(schedule_id, values);
             getSkill();
             onClose();
         }
@@ -68,20 +67,20 @@ export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedul
                     <Grid item sx={{ m: 2 }}>
                         <Grid container>
                             <FormControl sx={{ m: 1, minWidth: 590 }}>
-                                <InputLabel>Objetivo</InputLabel>
+                                <InputLabel>Habilidade</InputLabel>
                                 <Select
-                                    label="Objetivo"
-                                    id="procedure_id"
-                                    name="procedure_id"
-                                    value={formik.values.procedure_id}
+                                    label="Habilidade"
+                                    id="skill_id"
+                                    name="skill_id"
+                                    value={formik.values.skill_id}
                                     onChange={formik.handleChange}
                                     fullWidth
                                     required
                                 >
                                     {
-                                        procedures.map((procedure) => {
-                                            return <MenuItem key={procedure.id} value={procedure.id}>
-                                                {procedure.objective}
+                                        skills.map((skill) => {
+                                            return <MenuItem key={skill.id} value={skill.id}>
+                                                {skill.name}
                                             </MenuItem>
                                         })
                                     }
@@ -113,7 +112,7 @@ export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedul
                         <DialogTitle>Confirmação de alteração</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Esta ação adicionará o objetivo em todas as agendas relacionadas do cliente
+                                Esta ação adicionará a habilidade em todas as agendas relacionadas do cliente
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>

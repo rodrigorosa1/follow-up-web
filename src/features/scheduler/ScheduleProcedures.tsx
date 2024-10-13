@@ -9,12 +9,14 @@ import ISkill from "../../types/skill.type";
 import { ReplyOutlined } from "@mui/icons-material";
 import AddIcon from '@mui/icons-material/Add';
 import { ProcedureSelection } from "./ProcedureSelection";
-import { getProcedures } from "../../services/skill.service";
+import { getProcedures, getSkills } from "../../services/skill.service";
+import { SkillSelection } from "./SkillSelection";
 
 export const ScheduleProcedures = () => {
     let navigate: NavigateFunction = useNavigate();
     const { id } = useParams();
     const [skills, setSkills] = React.useState<any[]>([]);
+    const [allSkills, setAllSkills] = React.useState<ISkill[]>([]);
     const [selectedSkill, setSelectedSkill] = React.useState<ISkill | null>(null);
     const [procedures, setProcedures] = React.useState<IProcedure[]>([]);
     const [dataLoaded, setDataLoaded] = React.useState(false);
@@ -24,6 +26,7 @@ export const ScheduleProcedures = () => {
     const [selectedProcedure, setSelectedProcedure] = React.useState<IProcedure | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isPrcModal, setIsPrcModal] = React.useState(false);
+    const [isSkillModal, setIsSkillModal] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [remove, setRemove] = React.useState<IProcedure>();
     const [allProcedures, setAllProcedures] = React.useState<IProcedure[]>([]);
@@ -45,17 +48,24 @@ export const ScheduleProcedures = () => {
     const getProceduresSchedule = async (event_id: string, skill_id: string) => {
         const procedures = await getEventProcedureStudent(event_id, skill_id);
         setProcedures(procedures);
-        setDataLoaded(true);
     }
 
     const getSkill = async () => {
         if (id) {
             const event = await getEventslId(id);
-            setSkills(event.skills);
-            setSelectedSkill(event.skills[0]);
-            getProceduresSchedule(event.id, event.skills[0].skill_id);
-            getProceduresAll(event.skills[0].skill_id);
+            if (Array.isArray(event.skills) && event.skills.length > 0) {
+                setSkills(event.skills);
+                setSelectedSkill(event.skills[0]);
+                getProceduresSchedule(event.id, event.skills[0].skill_id);
+                getProceduresAll(event.skills[0].skill_id);
+            }
+            setDataLoaded(true);
         };
+    }
+
+    const getAllSkills = async () => {
+        const all = await getSkills();
+        setAllSkills(all);
     }
 
     const handleSkillSelected = (event: any) => {
@@ -80,8 +90,16 @@ export const ScheduleProcedures = () => {
 
     const openAddPrc = () => {
         setIsPrcModal(true);
-
     }
+
+    const openAddSkill = () => {
+        setIsSkillModal(true);
+    }
+
+    const handleCloseSkillModal = () => {
+        setIsSkillModal(false);
+        getSkill();
+    };
 
     const handleClosePrcModal = () => {
         setIsPrcModal(false);
@@ -100,14 +118,21 @@ export const ScheduleProcedures = () => {
     const handleRemoveProcedure = () => {
         if (remove?.id) {
             removeEventProcedures(remove.id);
+            getAllSkills();
+            getSkill();
             handleClose();
             setSnackbarMessage('Objetivo removido da agendas')
             handleSnackbarOpen();
         }
     }
 
-    React.useEffect(() => {
+    const dataPage = () => {
+        getAllSkills();
         getSkill();
+    }
+
+    React.useEffect(() => {
+        dataPage();
     }, []);
 
     return (
@@ -118,6 +143,16 @@ export const ScheduleProcedures = () => {
         ) : (
             <Box sx={{ width: '100%', typography: 'body1' }}>
                 <Grid item>
+                    {id && (
+                        <SkillSelection
+                            skills={allSkills}
+                            isOpen={isSkillModal}
+                            schedule_id={id}
+                            onClose={handleCloseSkillModal}
+                            onSnackbarOpen={handleSnackbarOpen}
+                            getSkill={getSkill}
+                        />
+                    )}
                     <ProcedureDetails
                         procedure={selectedProcedure}
                         isOpen={isModalOpen}
@@ -138,6 +173,19 @@ export const ScheduleProcedures = () => {
                     )}
                 </Grid>
                 <Grid item>
+                    <Grid container alignItems="left" justifyContent="left">
+                        <Fab
+                            variant="extended"
+                            size="small"
+                            color="primary"
+                            aria-label="add"
+                            onClick={openAddSkill}>
+                            <AddIcon sx={{ mr: 1 }} />
+                            Adicionar habilidade
+                        </Fab>
+                    </Grid>
+                </Grid>
+                <Grid item sx={{ m: 2 }}>
                     <FormControl sx={{ m: 1, minWidth: 720 }}>
                         <InputLabel>Habilidade</InputLabel>
                         <Select

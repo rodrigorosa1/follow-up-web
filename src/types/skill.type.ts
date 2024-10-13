@@ -1,5 +1,5 @@
 export default interface ISkill{
-    id?: string | null;
+    id?: string;
     name: string;
     skill_id?: string | null;
     objective: string | null;

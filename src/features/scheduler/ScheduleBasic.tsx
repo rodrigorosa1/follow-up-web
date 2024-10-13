@@ -2,7 +2,7 @@ import * as React from "react"
 import { IEvent, Iselection } from "../../types/scheduler.type";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { deleteAllEvents, deleteEvent, getEventslId, postEvents } from "../../services/event.service";
-import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, SelectChangeEvent } from "@mui/material";
+import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, SelectChangeEvent, Stack } from "@mui/material";
 import { useFormik } from "formik";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
@@ -38,9 +38,11 @@ export const ScheduleBasic = () => {
         period: '',
         repeat: 'NÃO',
         skills: [],
+        weekDays: []
     }
 
     const [skills, setSkills] = React.useState<Iselection[]>([]);
+    const [weekDays, setWeekDays] = React.useState<Iselection[]>([]);
     const [dataForm, setDataForm] = React.useState(initial);
     const [students, setStudents] = React.useState<Iselection[]>([]);
     const [profissionals, setProfessionals] = React.useState<Iselection[]>([]);
@@ -54,8 +56,10 @@ export const ScheduleBasic = () => {
     const [procedures, setProcedures] = React.useState<readonly IProcedure[]>([]);
     const [proceduresSelected, setProceduresSelected] = React.useState<readonly IProcedure[]>([]);
     const [checked, setChecked] = React.useState<readonly IProcedure[]>([]);
+    const [weekDaysSelected, setWeekDaysSelected] = React.useState<Iselection[]>([]);
     const leftChecked = intersection(checked, procedures);
     const rightChecked = intersection(checked, proceduresSelected);
+
 
     const { id } = useParams();
 
@@ -89,12 +93,32 @@ export const ScheduleBasic = () => {
             value: skill.id,
         }))
         setSkills(skills_);
+
+        const days = [
+            { value: 1, text: 'Seg' },
+            { value: 2, text: 'Ter' },
+            { value: 3, text: 'Qua' },
+            { value: 4, text: 'Qui' },
+            { value: 5, text: 'Sex' },
+            { value: 6, text: 'Sab' }
+        ]
+        const days_: Iselection[] = days.map((days: { text: any; value: any; }) => ({
+            id: days.value,
+            text: days.text,
+            value: days.value,
+        }))
+        setWeekDays(days_);
         setDataLoaded(true);
     }
 
     const handleSkill = async (event: any) => {
         formik.handleChange(event);
         setSkillsSelected(event.target.value);
+    }
+
+    const handleWeekDays = async (event: any) => {
+        formik.handleChange(event);
+        setWeekDaysSelected(event.target.value);
     }
 
     const listProcedures = async () => {
@@ -252,6 +276,7 @@ export const ScheduleBasic = () => {
         scheduleId();
     }, []);
 
+
     const formatPayload = (event: any) => {
         const data = {
             ...event,
@@ -259,6 +284,7 @@ export const ScheduleBasic = () => {
             period: event.repeat == 'NÃO' ? 1 : event.period,
             skill_id: formatSkillIDs(event.skills),
             procedures: proceduresSelected,
+            dates: formatDatesForWeek(event.start)
         }
         return data;
     }
@@ -268,6 +294,7 @@ export const ScheduleBasic = () => {
         initialValues: dataForm,
         onSubmit: (values) => {
             const payload = formatPayload(values);
+            console.log(payload);
             postEvents(payload).then((r) => {
                 if (Array.isArray(r)) {
                     setSnackbarError(false)
@@ -285,6 +312,18 @@ export const ScheduleBasic = () => {
         }
     });
 
+    const formatDatesForWeek = (date: any) => {
+        const selectedDates: any[] = [];
+
+        weekDaysSelected.forEach(daySelected => {
+            if (date.day() !== daySelected.value) {
+                const newDate = date.day(daySelected.value);
+                selectedDates.push(new Date(newDate).toISOString().split('T')[0]);
+            }
+        });
+
+        return selectedDates;
+    }
 
     const customList = (title: React.ReactNode, items: readonly IProcedure[]) => (
         <Card>
@@ -335,7 +374,7 @@ export const ScheduleBasic = () => {
                                     }}
                                 />
                             </ListItemIcon>
-                            <ListItemText id={value.id} primary={value.objective} />
+                            <ListItemText id={value.id} primary={value.objective} secondary={value.skill.name} />
                         </ListItemButton>
                     );
                 })}
@@ -353,8 +392,8 @@ export const ScheduleBasic = () => {
                 <form onSubmit={formik.handleSubmit}>
                     <Grid item>
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="de">
-                            <Grid container alignItems="center" justifyContent="center">
-                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                            <Grid container sx={{ m: 1 }}>
+                                <FormControl sx={{ m: 1, minWidth: 250 }}>
                                     <DatePicker
                                         label="Data da Agenda"
                                         value={dayjs(formik.values.start)}
@@ -364,7 +403,7 @@ export const ScheduleBasic = () => {
                                         }}
                                     />
                                 </FormControl>
-                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                <FormControl sx={{ m: 1, minWidth: 250 }}>
                                     <TextField
                                         id="start_hour"
                                         name="start_hour"
@@ -375,7 +414,7 @@ export const ScheduleBasic = () => {
                                         required
                                     />
                                 </FormControl>
-                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                <FormControl sx={{ m: 1, minWidth: 250 }}>
                                     <TextField
                                         id="end_hour"
                                         name="end_hour"
@@ -389,10 +428,45 @@ export const ScheduleBasic = () => {
                             </Grid>
                         </LocalizationProvider>
                     </Grid>
-                    <Grid item sx={{
-                        marginLeft: 22,
-                    }}>
-                        <Grid container>
+                    <Grid item>
+                        {!id && (
+                            <Grid container>
+                                <Stack sx={{ width: '100%' }} spacing={2}>
+                                    <Alert severity="info">
+                                        Em caso de repetição na semana, selecione os dias.
+                                    </Alert>
+                                </Stack>
+                            </Grid>
+                        )}
+                    </Grid>
+                    <Grid item>
+                        <Grid container sx={{ m: 1 }}>
+                            {!id && (
+                                <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                    <InputLabel>Dia da semana</InputLabel>
+                                    <Select
+                                        label="Dia da semana"
+                                        id="weekDays"
+                                        name="weekDays"
+                                        multiple
+                                        fullWidth
+                                        value={formik.values.weekDays}
+                                        onChange={handleWeekDays}
+                                        onBlur={formik.handleBlur}
+                                        renderValue={(selected: any) => (
+                                            <div>
+                                                {selected.map((value: any) => (
+                                                    <Chip key={value.id} label={value.text as string} />
+                                                ))}
+                                            </div>
+                                        )}
+                                    >
+                                        {weekDays.map((value: any) => (
+                                            <MenuItem key={value.id} value={value}>{value.text}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            )}
                             <FormControl sx={{ m: 1, minWidth: 250 }}>
                                 <InputLabel>Repete</InputLabel>
                                 <Select
@@ -439,89 +513,99 @@ export const ScheduleBasic = () => {
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <Grid container alignItems="center" justifyContent="center">
-                            <FormControl sx={{ m: 1, minWidth: 720 }}>
-                                <InputLabel>Cliente</InputLabel>
-                                <Select
-                                    label="Cliente"
-                                    id="student_id"
-                                    name="student_id"
-                                    value={formik.values.student_id}
-                                    onChange={formik.handleChange}
-                                    fullWidth
-                                    required
-                                >
-                                    {
-                                        students.map((student) => {
-                                            return <MenuItem key={student.id} value={student.id}>
-                                                {student.text}
-                                            </MenuItem>
-                                        })
-                                    }
-                                </Select>
-                            </FormControl>
+                        <Grid container>
+                            <Stack sx={{ width: '100%' }} spacing={2}>
+                                <FormControl sx={{ m: 1, minWidth: 720 }}>
+                                    <InputLabel>Cliente</InputLabel>
+                                    <Select
+                                        label="Cliente"
+                                        id="student_id"
+                                        name="student_id"
+                                        value={formik.values.student_id}
+                                        onChange={formik.handleChange}
+                                        fullWidth
+                                        required
+                                    >
+                                        {
+                                            students.map((student) => {
+                                                return <MenuItem key={student.id} value={student.id}>
+                                                    {student.text}
+                                                </MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Stack>
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <Grid container alignItems="center" justifyContent="center">
-                            <FormControl sx={{ m: 1, minWidth: 720 }}>
-                                <InputLabel>Profissional</InputLabel>
-                                <Select
-                                    label="Profissional"
-                                    id="instructor_id"
-                                    name="instructor_id"
-                                    value={formik.values.instructor_id}
-                                    onChange={formik.handleChange}
-                                    fullWidth
-                                    required
-                                >
-                                    {
-                                        profissionals.map((professional) => {
-                                            return <MenuItem key={professional.id} value={professional.id}>
-                                                {professional.text}
-                                            </MenuItem>
-                                        })
-                                    }
-                                </Select>
-                            </FormControl>
+                        <Grid container>
+                            <Stack sx={{ width: '100%' }} spacing={2}>
+                                <FormControl sx={{ m: 1, minWidth: 720 }}>
+                                    <InputLabel>Profissional</InputLabel>
+                                    <Select
+                                        label="Profissional"
+                                        id="instructor_id"
+                                        name="instructor_id"
+                                        value={formik.values.instructor_id}
+                                        onChange={formik.handleChange}
+                                        fullWidth
+                                        required
+                                    >
+                                        {
+                                            profissionals.map((professional) => {
+                                                return <MenuItem key={professional.id} value={professional.id}>
+                                                    {professional.text}
+                                                </MenuItem>
+                                            })
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Stack>
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <Grid container alignItems="center" justifyContent="center">
-                            <FormControl sx={{ m: 1, minWidth: 700 }}>
-                                <InputLabel>Habilidades</InputLabel>
-                                <Select
-                                    label="Habilidades"
-                                    id="skills"
-                                    name="skills"
-                                    multiple
-                                    fullWidth
-                                    value={formik.values.skills}
-                                    onChange={handleSkill}
-                                    onBlur={formik.handleBlur}
-                                    renderValue={(selected: any) => (
-                                        <div>
-                                            {selected.map((value: any) => (
-                                                <Chip key={value.id} label={value.text as string} />
-                                            ))}
-                                        </div>
-                                    )}
-                                >
-                                    {skills.map((skill) => (
-                                        //@ts-ignore - necessary to load object into value
-                                        <MenuItem key={skill.id} value={skill}>{skill.text}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                        <Stack sx={{ width: '100%' }} spacing={2}>
                             {!id && (
-                                <IconButton
-                                    onClick={listProcedures}
-                                    title="Carregar"
-                                >
-                                    <RefreshIcon />
-                                </IconButton>
+                                <Alert severity="info">
+                                    Filtre os ojetivos pela habilidade. Para agenda, as habildiades salvas serão consideradas pelos objetivos selecionados.
+                                </Alert>
                             )}
-                        </Grid>
+                            <Grid container alignItems="center" justifyContent="center">
+                                <FormControl sx={{ m: 1, minWidth: 700 }}>
+                                    <InputLabel>Habilidades</InputLabel>
+                                    <Select
+                                        label="Habilidades"
+                                        id="skills"
+                                        name="skills"
+                                        multiple
+                                        fullWidth
+                                        value={formik.values.skills}
+                                        onChange={handleSkill}
+                                        onBlur={formik.handleBlur}
+                                        renderValue={(selected: any) => (
+                                            <div>
+                                                {selected.map((value: any) => (
+                                                    <Chip key={value.id} label={value.text as string} />
+                                                ))}
+                                            </div>
+                                        )}
+                                    >
+                                        {skills.map((skill: any) => (
+                                            <MenuItem key={skill.id} value={skill}>{skill.text}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                {!id && (
+                                    <IconButton
+                                        onClick={listProcedures}
+                                        title="Carregar"
+                                    >
+                                        <RefreshIcon />
+                                    </IconButton>
+                                )}
+                            </Grid>
+                        </Stack>
                     </Grid>
                     {!id && (
                         <Grid item>
