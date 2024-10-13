@@ -26,4 +26,5 @@ export interface IEvent {
     skills: any;
     selectedValues?: any;
     procedures?: any;
+    weekDays?: any;
 }
