@@ -103,3 +103,21 @@ export const removeEventProcedures = (id: string) => {
             return error;
         });
 }
+
+export const addEventsSkill = (id: string, data: any) => {
+    return axios.post(API_URL + id + '/skills/',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const removeEventSkill = (id: string) => {
+    return axios.delete(API_URL + 'skills/' + id,
+        { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
