@@ -3,7 +3,7 @@ import { IEvent, Iselection } from "../../types/scheduler.type";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { deleteAllEvents, deleteEvent, getEventslId, postEvents } from "../../services/event.service";
 import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, SelectChangeEvent, Stack } from "@mui/material";
-import { useFormik } from "formik";
+import { isEmptyArray, useFormik } from "formik";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -11,9 +11,11 @@ import { HourMask } from "../../components/masks/InputMask";
 import { EventBusy, PlaylistRemove, ReplyOutlined, Save } from "@mui/icons-material";
 import { getActiveProfessionals } from "../../services/professional.service";
 import { getActiveStudents } from "../../services/student.service";
-import { getProceduresManySkills, getSkills } from "../../services/skill.service";
+import { getProceduresManySkills, getSkills, getSkillsSpecialty } from "../../services/skill.service";
 import IProcedure from "../../types/procedure.type";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { getSpecialties } from "../../services/specialty.service";
+import ISpecialty from "../../types/specialty.type";
 
 function not(a: readonly IProcedure[], b: readonly IProcedure[]) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -30,6 +32,7 @@ function union(a: readonly IProcedure[], b: readonly IProcedure[]) {
 export const ScheduleBasic = () => {
     const initial: IEvent = {
         student_id: '',
+        specialty_id: '',
         instructor_id: '',
         start: '',
         end: '',
@@ -43,6 +46,7 @@ export const ScheduleBasic = () => {
 
     const [skills, setSkills] = React.useState<Iselection[]>([]);
     const [weekDays, setWeekDays] = React.useState<Iselection[]>([]);
+    const [specialties, setSpecialties] = React.useState<ISpecialty[]>([]);
     const [dataForm, setDataForm] = React.useState(initial);
     const [students, setStudents] = React.useState<Iselection[]>([]);
     const [profissionals, setProfessionals] = React.useState<Iselection[]>([]);
@@ -67,6 +71,25 @@ export const ScheduleBasic = () => {
 
     const historyBack = () => {
         navigate("/scheduler");
+    }
+
+    const specialtyList = async () => {
+        const list = await getSpecialties();
+        setSpecialties(list);
+    }
+
+    const skillsList = async (specialty_id: any) => {
+        if (!isEmptyArray(skills)) {
+            formik.setFieldValue('skills', []);
+        }
+        const listSkills = await getSkillsSpecialty(specialty_id);
+        const skills_: Iselection[] = listSkills.map((skill: { name: any; id: any; }) => ({
+            id: skill.id,
+            text: skill.name,
+            value: skill.id,
+        }))
+        setSkills(skills_);
+
     }
 
     const dataOptions = async () => {
@@ -114,6 +137,11 @@ export const ScheduleBasic = () => {
     const handleSkill = async (event: any) => {
         formik.handleChange(event);
         setSkillsSelected(event.target.value);
+    }
+
+    const handleSpecialty = async (event: any) => {
+        formik.handleChange(event);
+        skillsList(event.target.value);
     }
 
     const handleWeekDays = async (event: any) => {
@@ -192,6 +220,7 @@ export const ScheduleBasic = () => {
             const event: IEvent = {
                 student_id: response.student_id,
                 instructor_id: response.instructor_id,
+                specialty_id: response.specialty_id,
                 event_id: response.event_id,
                 start: new Date(response.start).toISOString().split('T')[0],
                 end: new Date(response.end).toISOString().split('T')[0],
@@ -274,6 +303,10 @@ export const ScheduleBasic = () => {
 
     React.useEffect(() => {
         scheduleId();
+    }, []);
+
+    React.useEffect(() => {
+        specialtyList();
     }, []);
 
 
@@ -424,6 +457,27 @@ export const ScheduleBasic = () => {
                                         InputProps={{ inputComponent: HourMask }}
                                         required
                                     />
+                                </FormControl>
+                                <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                    <InputLabel>Especialidade</InputLabel>
+                                    <Select
+                                        label="Especialidade"
+                                        id="specialty_id"
+                                        name="specialty_id"
+                                        value={formik.values.specialty_id}
+                                        onChange={handleSpecialty}
+                                        fullWidth
+                                        required
+                                    >
+                                        {
+                                            specialties.map((specialty: any) => {
+                                                return <MenuItem key={specialty.id} value={specialty.id}>
+                                                    {specialty.name}
+                                                </MenuItem>
+                                            })
+                                        }
+                                    </Select>
+
                                 </FormControl>
                             </Grid>
                         </LocalizationProvider>

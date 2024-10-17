@@ -82,7 +82,7 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
                                 <TextField
                                     id="description"
                                     name="description"
-                                    label="Valor Hora"
+                                    label="Descrição"
                                     size="small"
                                     value={formik.values.description}
                                     onChange={formik.handleChange}

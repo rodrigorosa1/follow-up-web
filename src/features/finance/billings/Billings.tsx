@@ -1,18 +1,18 @@
 import * as React from "react";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-import { IPaymentResume } from "../../../types/payment.type";
-import { FilterAltSharp, Search } from "@mui/icons-material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { IBillingResume } from "../../../types/billing.type";
+import { IStudent } from "../../../types/student.type";
+import { getStudents } from "../../../services/student.service";
+import { resumeBillings } from "../../../services/billing.service";
 import { useFormik } from "formik";
-import { HiEye, } from "react-icons/hi2";
-import { resumePayments } from "../../../services/payment.service";
 import { Autocomplete, FormControl, FormLabel, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from "@mui/material";
 import { CustomBreadcrumbs } from "../../../components/layout/Breadcrumbs";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { FilterAltSharp, Search } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { formatCurrency } from "../../../helpers/currency";
-import { getProfessionals } from "../../../services/professional.service";
-import { IProfessional } from "../../../types/professional.type";
+import { HiEye } from "react-icons/hi2";
 
 interface IPayload {
     status: string | null,
@@ -20,16 +20,16 @@ interface IPayload {
     end: string | null,
 }
 
-export const Payments = () => {
+export const Billings = () => {
     let navigate: NavigateFunction = useNavigate();
-    const [payments, setPayments] = React.useState<IPaymentResume[]>([]);
-    const [professionals, setProfessionals] = React.useState<IProfessional[]>([]);
+    const [billings, setBillings] = React.useState<IBillingResume[]>([]);
+    const [students, setStudents] = React.useState<IStudent[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [dataDetails, setDataDetails] = React.useState<IPayload>();
 
-    const goDetails = (instructor_id: string) => {
-        navigate('/finance/payments/' + instructor_id, { state: { dataDetails } });
+    const goDetails = (student_id: string) => {
+        navigate('/finance/billings/' + student_id, { state: { dataDetails } });
     };
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -46,7 +46,7 @@ export const Payments = () => {
         const formattedStart = new Date(form.start).toISOString().split('T')[0];
         const formattedEnd = new Date(form.end).toISOString().split('T')[0];
         const data = {
-            instructor_id: form.professional.id,
+            student_id: form.student.id,
             status: status,
             start: formattedStart,
             end: formattedEnd
@@ -54,13 +54,13 @@ export const Payments = () => {
         return data;
     }
 
-    const listProfessionals = async () => {
-        const list = await getProfessionals();
-        setProfessionals(list);
+    const listStudents = async () => {
+        const list = await getStudents();
+        setStudents(list);
     }
 
     const defaultProps = {
-        options: professionals,
+        options: students,
         getOptionLabel: (option: any) => option.fullname,
     };
 
@@ -70,9 +70,9 @@ export const Payments = () => {
             start: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
             end: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString().split('T')[0]
         }
-        const payments = await resumePayments(payload);
+        const billings = await resumeBillings(payload);
         setDataDetails(payload);
-        setPayments(payments);
+        setBillings(billings);
     }
 
     React.useEffect(() => {
@@ -80,22 +80,21 @@ export const Payments = () => {
     }, []);
 
     React.useEffect(() => {
-        listProfessionals();
+        listStudents();
     }, []);
-
 
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            professional: null,
+            student: null,
             status: "PREVISTO",
             start: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
             end: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString().split('T')[0]
         },
         onSubmit: async (values) => {
             const payload = formatPayload(values);
-            const payments = await resumePayments(payload);
-            setPayments(payments);
+            const payments = await resumeBillings(payload);
+            setBillings(payments);
         }
     });
 
@@ -112,8 +111,8 @@ export const Payments = () => {
                     <CustomBreadcrumbs
                         title1="Financeiro"
                         href1="/finance"
-                        title2="Pagamentos"
-                        href2="/payments"
+                        title2="Recebimentos"
+                        href2="/billings"
                     />
                 </Grid>
             </Grid>
@@ -141,14 +140,14 @@ export const Payments = () => {
                                     }}>
                                         <Autocomplete
                                             {...defaultProps}
-                                            value={formik.values.professional}
+                                            value={formik.values.student}
                                             onChange={(event, newValue) => {
-                                                formik.setFieldValue('professional', newValue);
+                                                formik.setFieldValue('student', newValue);
                                             }}
-                                            id="professional_id"
+                                            id="student_id"
                                             disableCloseOnSelect
                                             renderInput={(params) => (
-                                                <TextField {...params} label="Profssional" variant="standard" />
+                                                <TextField {...params} label="Cliente" variant="standard" />
                                             )}
                                         />
                                     </Grid>
@@ -232,7 +231,7 @@ export const Payments = () => {
                     <Table size="small">
                         <TableHead className="tableHeader">
                             <TableRow>
-                                <TableCell>Nome/Razão Social</TableCell>
+                                <TableCell>Cliente</TableCell>
                                 <TableCell>Tipo</TableCell>
                                 <TableCell>Quantidade</TableCell>
                                 <TableCell>Total</TableCell>
@@ -240,13 +239,13 @@ export const Payments = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody className="tableBody">
-                            {payments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: any) => (
+                            {billings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: any) => (
                                 <TableRow key={row.id}>
                                     <TableCell>
-                                        {row.fullname} - {row.social_name}
+                                        {row.fullname}
                                     </TableCell>
                                     <TableCell>
-                                        {row.specialty}
+                                        {row.category}
                                     </TableCell>
                                     <TableCell>
                                         {row.count}
@@ -259,7 +258,7 @@ export const Payments = () => {
                                             <HiEye
                                                 size={20}
                                                 color='grey'
-                                                onClick={() => goDetails(row.instructor_id)}
+                                                onClick={() => goDetails(row.student_id)}
                                             />
                                         </IconButton>
                                     </TableCell>
@@ -270,7 +269,7 @@ export const Payments = () => {
                     <TablePagination
                         rowsPerPageOptions={[10, 20, 30]}
                         component="div"
-                        count={payments.length}
+                        count={billings.length}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -280,5 +279,4 @@ export const Payments = () => {
             </Grid>
         </Grid>
     );
-
 }

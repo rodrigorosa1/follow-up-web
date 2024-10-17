@@ -195,7 +195,7 @@ export const PaymentListProfessional = () => {
                                             <Grid item xs={12} md={4} lg={4}>
                                                 <div className='resultDetailsSkill'>
                                                     <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
-                                                        Chave PIX
+                                                        Valor
                                                     </Typography>
                                                     <Grid container justifyContent="left" alignItems={"center"}>
                                                         <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
