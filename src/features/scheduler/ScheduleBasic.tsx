@@ -2,18 +2,26 @@ import * as React from "react"
 import { IEvent, Iselection } from "../../types/scheduler.type";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { deleteAllEvents, deleteEvent, getEventslId, postEvents } from "../../services/event.service";
-import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, SelectChangeEvent, Stack } from "@mui/material";
+import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
 import { useFormik } from "formik";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { HourMask } from "../../components/masks/InputMask";
 import { EventBusy, PlaylistRemove, ReplyOutlined, Save } from "@mui/icons-material";
 import { getActiveProfessionals } from "../../services/professional.service";
 import { getActiveStudents } from "../../services/student.service";
 import { getProceduresManySkills, getSkills } from "../../services/skill.service";
 import IProcedure from "../../types/procedure.type";
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { v4 as uuidv4 } from 'uuid';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
+interface HourField {
+    id: string;
+    start: string;
+    end: string;
+}
 
 function not(a: readonly IProcedure[], b: readonly IProcedure[]) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -38,7 +46,8 @@ export const ScheduleBasic = () => {
         period: '',
         repeat: 'NÃO',
         skills: [],
-        weekDays: []
+        weekDays: [],
+        hours: []
     }
 
     const [skills, setSkills] = React.useState<Iselection[]>([]);
@@ -59,6 +68,9 @@ export const ScheduleBasic = () => {
     const [weekDaysSelected, setWeekDaysSelected] = React.useState<Iselection[]>([]);
     const leftChecked = intersection(checked, procedures);
     const rightChecked = intersection(checked, proceduresSelected);
+    const [hours, setHours] = React.useState<HourField[]>([
+        { id: uuidv4(), start: '', end: '' },
+    ]);
 
 
     const { id } = useParams();
@@ -268,6 +280,22 @@ export const ScheduleBasic = () => {
         return skill_id;
     }
 
+    const addHourFields = () => {
+        setHours([...hours, { id: uuidv4(), start: '', end: '' }]);
+    };
+
+    const removeHourFields = (id: string) => {
+        setHours((prev) => prev.filter((hour) => hour.id !== id));
+    };
+
+    const handleInputChange = (id: string, field: string, value: string) => {
+        setHours((prev) =>
+            prev.map((hour) =>
+                hour.id === id ? { ...hour, [field]: value } : hour
+            )
+        );
+    };
+
     React.useEffect(() => {
         dataOptions();
     }, []);
@@ -276,6 +304,18 @@ export const ScheduleBasic = () => {
         scheduleId();
     }, []);
 
+    const formatDatesForWeek = (date: any) => {
+        const selectedDates: any[] = [];
+
+        weekDaysSelected.forEach(daySelected => {
+            if (date.day() !== daySelected.value) {
+                const newDate = date.day(daySelected.value);
+                selectedDates.push(new Date(newDate).toISOString().split('T')[0]);
+            }
+        });
+
+        return selectedDates;
+    }
 
     const formatPayload = (event: any) => {
         const data = {
@@ -284,7 +324,11 @@ export const ScheduleBasic = () => {
             period: event.repeat == 'NÃO' ? 1 : event.period,
             skill_id: formatSkillIDs(event.skills),
             procedures: proceduresSelected,
-            dates: formatDatesForWeek(event.start)
+            dates: formatDatesForWeek(event.start),
+            hours: hours.map(({ start, end }) => ({
+                start,
+                end,
+            }))
         }
         return data;
     }
@@ -294,7 +338,6 @@ export const ScheduleBasic = () => {
         initialValues: dataForm,
         onSubmit: (values) => {
             const payload = formatPayload(values);
-            console.log(payload);
             postEvents(payload).then((r) => {
                 if (Array.isArray(r)) {
                     setSnackbarError(false)
@@ -311,19 +354,6 @@ export const ScheduleBasic = () => {
             });
         }
     });
-
-    const formatDatesForWeek = (date: any) => {
-        const selectedDates: any[] = [];
-
-        weekDaysSelected.forEach(daySelected => {
-            if (date.day() !== daySelected.value) {
-                const newDate = date.day(daySelected.value);
-                selectedDates.push(new Date(newDate).toISOString().split('T')[0]);
-            }
-        });
-
-        return selectedDates;
-    }
 
     const customList = (title: React.ReactNode, items: readonly IProcedure[]) => (
         <Card>
@@ -403,29 +433,100 @@ export const ScheduleBasic = () => {
                                         }}
                                     />
                                 </FormControl>
-                                <FormControl sx={{ m: 1, minWidth: 250 }}>
-                                    <TextField
-                                        id="start_hour"
-                                        name="start_hour"
-                                        label="Inicio"
-                                        value={formik.values.start_hour}
-                                        onChange={formik.handleChange}
-                                        InputProps={{ inputComponent: HourMask }}
-                                        required
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ m: 1, minWidth: 250 }}>
-                                    <TextField
-                                        id="end_hour"
-                                        name="end_hour"
-                                        label="Final"
-                                        value={formik.values.end_hour}
-                                        onChange={formik.handleChange}
-                                        InputProps={{ inputComponent: HourMask }}
-                                        required
-                                    />
-                                </FormControl>
+                                {id && (
+                                    <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                        <TextField
+                                            fullWidth
+                                            label={`Hora Inicial`}
+                                            type="time"
+                                            value={formik.values.start_hour}
+                                            onChange={(value) => {
+                                                formik.setFieldValue('start_hour', value);
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            inputProps={{
+                                                step: 300, // 5 min
+                                            }}
+                                        />
+                                    </FormControl>
+                                )}
+                                {id && (
+                                    <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                        <TextField
+                                            fullWidth
+                                            label={`Hora Final`}
+                                            type="time"
+                                            value={formik.values.end_hour}
+                                            onChange={(value) => {
+                                                formik.setFieldValue('end_hour', value);
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            inputProps={{
+                                                step: 300, // 5 min
+                                            }}
+                                        />
+                                    </FormControl>
+                                )}
                             </Grid>
+                            {!id && (
+                                hours.map((hour, index) => (
+                                    <Grid container sx={{ m: 1 }} key={hour.id} alignItems="center">
+                                        <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                            <TextField
+                                                fullWidth
+                                                label={`Hora Inicial ${index + 1}`}
+                                                type="time"
+                                                value={hour.start}
+                                                onChange={(e) =>
+                                                    handleInputChange(hour.id, 'start', e.target.value)
+                                                }
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                                inputProps={{
+                                                    step: 300, // 5 min
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                            <TextField
+                                                fullWidth
+                                                label={`Hora Final ${index + 1}`}
+                                                type="time"
+                                                value={hour.end}
+                                                onChange={(e) =>
+                                                    handleInputChange(hour.id, 'end', e.target.value)
+                                                }
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                }}
+                                                inputProps={{
+                                                    step: 300, // 5 min
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <Grid item xs={2}>
+                                            <IconButton
+                                                aria-label="delete"
+                                                onClick={() => removeHourFields(hour.id)}
+                                                disabled={hours.length === 1} // Desabilita se houver apenas um campo
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                aria-label="adicionar mais horas"
+                                                onClick={addHourFields}
+                                            >
+                                                <AddCircleIcon />
+                                            </IconButton>
+                                        </Grid>
+                                    </Grid>
+                                ))
+                            )}
                         </LocalizationProvider>
                     </Grid>
                     <Grid item>

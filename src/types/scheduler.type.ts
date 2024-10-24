@@ -14,8 +14,8 @@ export interface IEvent {
     details?: string;
     start: string;
     end: string;
-    start_hour: string;
-    end_hour: string;
+    start_hour?: string;
+    end_hour?: string;
     period: string;
     repeat: string;
     status?: string;
@@ -26,4 +26,5 @@ export interface IEvent {
     selectedValues?: any;
     procedures?: any;
     weekDays?: any;
+    hours?: any;
 }
