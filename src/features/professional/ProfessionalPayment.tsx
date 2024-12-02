@@ -210,9 +210,23 @@ export const ProfessionalPayment = () => {
                                 >
                                     <MenuItem value={'MENSAL'}>Mês</MenuItem>
                                     <MenuItem value={'HORA'}>Agenda</MenuItem>
+                                    <MenuItem value={'COMISSÃO'}>Comissão</MenuItem>
                                 </Select>
                             </FormControl>
-                            <FormControl sx={{ m: 1, minWidth: 150 }}>
+                            {formik.values.mode_payment === 'COMISSÃO' ? (
+                                <FormControl sx={{ m: 1, minWidth: 150 }}>
+                                <TextField
+                                    id="comission"
+                                    name="comission"
+                                    label="Comissão %"
+                                    value={formik.values.comission}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                    required
+                                />
+                            </FormControl>
+                            ) : (
+                                <FormControl sx={{ m: 1, minWidth: 150 }}>
                                 <TextField
                                     id="value"
                                     name="value"
@@ -223,6 +237,7 @@ export const ProfessionalPayment = () => {
                                     required
                                 />
                             </FormControl>
+                            )}
                         </Grid>
                     </Grid>
                     <Grid item>

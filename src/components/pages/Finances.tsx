@@ -9,8 +9,8 @@ export const Finances = () => {
         navigate('/finance/payments')
     };
 
-    const goReceivables = () => {
-        navigate('/receivables')
+    const goBillings = () => {
+        navigate('/finance/billings')
     };
 
     const goSpecialty = () => {
@@ -48,7 +48,7 @@ export const Finances = () => {
                     height: 250,
                     color: '#615f63'
                 }}
-                    onClick={goReceivables}
+                    onClick={goBillings}
                 >
                     <Box>
                         <LuPanelTopOpen
@@ -74,13 +74,13 @@ export const Finances = () => {
                     </Box>
                 </IconButton>
             </Grid>
-            <Grid item xl={2} lg={2} md={2} sm={2} xs={2} mr={2}>
+            {/* <Grid item xl={2} lg={2} md={2} sm={2} xs={2} mr={2}>
                 <IconButton sx={{
                     width: 250,
                     height: 250,
                     color: '#615f63'
                 }}
-                    onClick={goReceivables}
+                    // onClick={goReceivables}
                 >
                     <Box>
                         <LuFileSearch
@@ -89,7 +89,7 @@ export const Finances = () => {
                         <Typography>Relatórios</Typography>
                     </Box>
                 </IconButton>
-            </Grid>
+            </Grid> */}
         </Grid>
     );
 

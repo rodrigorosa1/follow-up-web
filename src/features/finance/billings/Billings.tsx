@@ -232,7 +232,7 @@ export const Billings = () => {
                         <TableHead className="tableHeader">
                             <TableRow>
                                 <TableCell>Cliente</TableCell>
-                                <TableCell>Tipo</TableCell>
+                                <TableCell>Tipo de faturamento</TableCell>
                                 <TableCell>Quantidade</TableCell>
                                 <TableCell>Total</TableCell>
                                 <TableCell></TableCell>

@@ -29,3 +29,12 @@ export const updateBilling = (id: string, data: any) => {
             return error;
         });
 }
+
+export const updateManyBilling = (data: any) => {
+    return axios.post(API_URL + 'many-change-status',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}

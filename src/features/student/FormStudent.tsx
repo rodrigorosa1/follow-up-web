@@ -9,6 +9,7 @@ import { StudentBasic } from "./StudentBasic";
 import StudentResponsable from "./StudentsResponsable";
 import { StudentAddress } from "./StudentAddress";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
+import { StudentHealthPlan } from "./StudentHealthPlan";
 
 export const FormStudent = () => {
     const [value, setValue] = React.useState('1');
@@ -56,15 +57,13 @@ export const FormStudent = () => {
                                     {id ? (
                                         <Tab label="Endereço" value="3" wrapped />
                                     ) : (
-                                        <Tab label="Endereço" value="2" wrapped disabled />
+                                        <Tab label="Endereço" value="3" wrapped disabled />
                                     )}
-
-                                    <Tab label="Médico(a)" value="4" disabled wrapped />
-                                    <Tab label="Outras Terapias)" value="5" disabled wrapped />
-                                    <Tab label="Dados Escolares" value="6" disabled wrapped />
-                                    <Tab label="Medicamentos" value="7" disabled wrapped />
-                                    <Tab label="Convênios" value="8" disabled wrapped />
-                                    <Tab label="Arquivos" value="9" disabled wrapped />
+                                    {id ? (
+                                        <Tab label="Convênios" value="4" wrapped />
+                                    ) : (
+                                        <Tab label="Convênios" value="4" wrapped disabled />
+                                    )}
                                 </TabList>
                             </Box>
                             <TabPanel value="1">
@@ -75,6 +74,9 @@ export const FormStudent = () => {
                             </TabPanel>
                             <TabPanel value="3">
                                 <StudentAddress />
+                            </TabPanel>
+                            <TabPanel value="4">
+                                <StudentHealthPlan />
                             </TabPanel>
                         </TabContext>
                     </Box>

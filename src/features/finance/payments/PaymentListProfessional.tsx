@@ -24,14 +24,10 @@ export const PaymentListProfessional = () => {
     const [professional, setProfessional] = React.useState<IProfessional>()
     const [details, setDetails] = React.useState<IProfessionalBankAccount>();
     const [dataLoaded, setDataLoaded] = React.useState(false);
-
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [snackbarError] = React.useState(false);
     const [selected, setSelected] = React.useState<IPayament | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
-
-
-
 
     const { instructor_id } = useParams();
     const location = useLocation();

@@ -141,3 +141,38 @@ export const getActiveStudents = () => {
         });
 }
 
+export const getStudentHealthPlan = (id: string) => {
+    return axios.get(API_URL + 'plans/' + id,
+        { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const deleteStudentHealthPlan = (id: string, healthPlanId: string) => {
+    return axios.delete(API_URL + 'plans/' + id + '/' + healthPlanId,
+        { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const postStudentHealthPlan = (data: any) => {
+    return axios.post(API_URL + 'plans',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const changeBillingType = (contractor_id: string, data: any) => {
+    return axios.patch(API_URL + 'contractor/' + contractor_id,
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}

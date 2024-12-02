@@ -29,6 +29,8 @@ import { Finances } from './components/pages/Finances';
 import { Specialty } from './features/specialty/Specialty';
 import { Payments } from './features/finance/payments/Payments';
 import { PaymentListProfessional } from './features/finance/payments/PaymentListProfessional';
+import { Billings } from './features/finance/billings/Billings';
+import { BillingsCustomer } from './features/finance/billings/BillingsCustomer';
 
 
 const App: React.FC = () => {
@@ -85,6 +87,8 @@ const App: React.FC = () => {
               <Route path='/finance/payments' element={<Payments />} />
               <Route path='/finance/payments/:instructor_id' element={<PaymentListProfessional />} />
               <Route path='/finance/specialties' element={<Specialty />} />
+              <Route path='/finance/billings' element={<Billings />} />
+              <Route path='/finance/billings/:student_id' element={<BillingsCustomer />} />
             </Route>
           </Routes>
         </Layout>
