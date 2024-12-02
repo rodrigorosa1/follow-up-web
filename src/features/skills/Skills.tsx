@@ -37,8 +37,8 @@ export const Skills = () => {
             headerClassName: 'header-datagrid-prof',
         },
         {
-            field: 'objective',
-            headerName: 'Objetivo',
+            field: 'specialty_name',
+            headerName: 'Especialidade',
             width: 500,
             headerClassName: 'header-datagrid-prof',
         },

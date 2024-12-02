@@ -18,11 +18,9 @@ interface Props {
 export const Sidebar: React.FC<Props> = ({ handleDrawerClose}) => {
     let navigate: NavigateFunction = useNavigate();
 
-    //Routes
     const goHome = () => {
         handleDrawerClose();
         navigate("/home");
-
     };
 
     const goFollowUp = () => {
@@ -148,22 +146,8 @@ export const Sidebar: React.FC<Props> = ({ handleDrawerClose}) => {
                         </Grid>
                     </ListItemButton>
                 </ListItem>
-                {/* <ListItem sx={stlyeMenuItem} className="items-item">
-                    <ListItemButton style={styleMenuButton}>
-                        <Grid container justifyContent="center">
-                            <Grid item>
-                                <HiOutlineDocument size={20} />
-                            </Grid>
-                            <Grid container justifyContent="center">
-                                <Grid item>
-                                    <Typography>Procedimentos</Typography>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </ListItemButton>
-                </ListItem> */}
                 <ListItem sx={stlyeMenuItem} className="items-item">
-                    <ListItemButton style={styleMenuButton} disabled>
+                    <ListItemButton style={styleMenuButton} onClick={goFinance}>
                         <Grid container justifyContent="center">
                             <Grid item>
                                 <HiOutlineCurrencyDollar size={20} />

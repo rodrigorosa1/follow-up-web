@@ -8,10 +8,11 @@ import { useFormik } from "formik";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
 import { FilterAltSharp, Search } from "@mui/icons-material";
 import { getInstructorAvatarId } from "../../services/avatar.service";
+import { IProfessional } from "../../types/professional.type";
 
 export const Professional = () => {
     let navigate: NavigateFunction = useNavigate();
-    const [professionals, setProfessionals] = React.useState<any[]>([]);
+    const [professionals, setProfessionals] = React.useState<IProfessional[]>([]);
     const [currentActive, setCurrentActive] = React.useState('');
     const [open, setOpen] = React.useState(false);
     const [page, setPage] = React.useState(0);
@@ -173,7 +174,6 @@ export const Professional = () => {
                             <TableRow>
                                 <TableCell>Profissional</TableCell>
                                 <TableCell>Telefone</TableCell>
-                                <TableCell>Especialidade</TableCell>
                                 <TableCell>Situação</TableCell>
                             </TableRow>
                         </TableHead>
@@ -195,7 +195,6 @@ export const Professional = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>{row.phone}</TableCell>
-                                    <TableCell>{row.specialty_name}</TableCell>
                                     <TableCell>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             <IconButton>

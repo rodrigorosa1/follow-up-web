@@ -103,3 +103,31 @@ export const getActiveProfessionals = () => {
             return error;
         });
 }
+
+export const postDataPayment = (id: string, data: any) => {
+    return axios.post(API_URL + id + '/data-payment',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const updateDataPayment = (id: string, data: any) => {
+    return axios.patch(API_URL + id + '/data-payment',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const getDataPayment = (id: string) => {
+    return axios.get(API_URL + id + '/data-payment',
+        { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+

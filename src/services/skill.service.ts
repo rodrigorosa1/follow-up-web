@@ -12,6 +12,15 @@ export const getSkills = () => {
         });
 }
 
+export const getSkillsSpecialty = (specialty_id: string) => {
+    return axios.get(API_URL + 'specialty/' + specialty_id,
+        { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
 export const getSkillslId = (id: string) => {
     return axios.get(API_URL + id,
         { headers: authHeader() }).then((resp) => {

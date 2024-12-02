@@ -1,20 +1,10 @@
 import axios from "axios";
 import { authHeader } from "./header.service";
 
-const API_URL = `${process.env.REACT_APP_API_URL}`;
+const API_URL = `${process.env.REACT_APP_API_URL}` + 'payments/';
 
-
-export const specialityList = () => {
-    return axios.get(API_URL + 'configurations/specialty',
-        { headers: authHeader() }).then((resp) => {
-            return resp.data;
-        }).catch((error) => {
-            return error;
-        });
-}
-
-export const postSpecialty = (data: any) => {
-    return axios.post(API_URL + "configurations/specialty",
+export const resumePayments = (data: any) => {
+    return axios.post(API_URL + 'resume',
         data, { headers: authHeader() }).then((resp) => {
             return resp.data;
         }).catch((error) => {
@@ -22,8 +12,17 @@ export const postSpecialty = (data: any) => {
         });
 }
 
-export const updateSpecialty = (id: string, data: any) => {
-    return axios.patch(API_URL + "configurations/specialty/" + id,
+export const instructorPayments = (data: any) => {
+    return axios.post(API_URL + 'for-instructor',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const updatePayment = (id: string, data: any) => {
+    return axios.patch(API_URL + id,
         data, { headers: authHeader() }).then((resp) => {
             return resp.data;
         }).catch((error) => {

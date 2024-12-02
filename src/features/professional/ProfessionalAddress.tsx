@@ -87,7 +87,6 @@ export const ProfessionalAddress = () => {
         initialValues: dataForm,
         onSubmit: (values) => {
             if (id) {
-                console.log(idAddress)
                 if (idAddress) {
                     upProfAddress(idAddress, values).then((r) => {
                         if (r.id) {

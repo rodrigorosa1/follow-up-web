@@ -1,4 +1,7 @@
+import { IHealthPlan } from "./healthPlan.type";
+
 export interface IStudent {
+  [x: string]: any;
   id: string,
   fullname: string,
   birthday: Date | null,
@@ -13,11 +16,14 @@ export interface IStudent {
   email: string | null,
   avatar: string | null,
   status: string | null,
+  contractor: IContractor;
+  responsable?: IResponsable[],
+  plans?: IHealthPlan[]
 }
 
 export interface IResponsable {
-  id?: string | null,
-  company_id?: string | null,
+  id?: string ,
+  company_id?: string,
   fullname: string,
   birthday: Date | null,
   document: string,
@@ -31,4 +37,10 @@ export interface IResponsable {
   bond: string | null,
   main: string | null,
   status: string | null,
+}
+
+export interface IContractor {
+  id: string,
+  type_billing: string,
+  responsable: IResponsable[] | null
 }

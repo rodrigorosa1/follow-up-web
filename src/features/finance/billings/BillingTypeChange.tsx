@@ -1,43 +1,46 @@
-import { Box, Typography, FormControl, Grid, IconButton, TextField, Modal } from "@mui/material";
+import * as React from "react";
 import { useFormik } from "formik";
+import { Box, FormControl, Grid, IconButton, InputLabel, MenuItem, Modal, Select, Typography } from "@mui/material";
 import { ReplyOutlined, Save } from "@mui/icons-material";
-import { postSpecialty, updateSpecialty } from "../../services/configuration.service";
-import Ispecialty from "../../types/specialty.type";
+import { changeBillingType } from "../../../services/student.service";
+
 
 const style = {
-    position: 'absolute' as 'absolute',
+    position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 450,
-    height: 200,
+    width: 550,
+    height: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    m: 2
 };
 
-interface ModalSpecialtyProps {
-    specialty: Ispecialty | null;
+interface ModalBillingTypeProps {
+    contractor_id: string,
+    type: string;
     isOpen: boolean;
     onClose: () => void;
     onSnackbarOpen: () => void;
+    startResume: () => void;
 }
 
-export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpen, onClose, onSnackbarOpen }) => {
-    const initial: Ispecialty = specialty || { specialty: '' };
+export const BillingTypeChange: React.FC<ModalBillingTypeProps> = ({ contractor_id, type, isOpen, onClose, onSnackbarOpen, startResume }) => {
+    const initial = {
+        category: type,
+    };
 
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: initial,
         onSubmit: (values) => {
-            if (specialty?.id) {
-                updateSpecialty(specialty.id, values);
-            } else {
-                postSpecialty(values);
-            }
+            changeBillingType(contractor_id, values);
             onSnackbarOpen();
             onClose();
+            startResume();
         }
     });
 
@@ -46,21 +49,25 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
             <form onSubmit={formik.handleSubmit}>
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                        {specialty ? 'Edição da especialidade' : 'Nome da nova especialidade'}
+                        Tipo de Faturamento
                     </Typography>
-                    <Grid item xl={12} lg={12} md={12} sm={12} xs={12} sx={{ mr: 2 }}>
+                    <Grid item sx={{ mr: 2 }}>
                         <Grid container>
-                            <FormControl sx={{ m: 1, minWidth: 200 }}>
-                                <TextField
-                                    id="specialty"
-                                    name="specialty"
-                                    label="Especialidade"
-                                    size="small"
-                                    value={formik.values.specialty}
+                            <FormControl sx={{ m: 2, minWidth: 450 }}>
+                                <InputLabel>Status</InputLabel>
+                                <Select
+                                    label="Tipo de Faturamento"
+                                    id="category"
+                                    name="category"
+                                    value={formik.values.category}
                                     onChange={formik.handleChange}
                                     fullWidth
                                     required
-                                />
+                                    size="small"
+                                >
+                                    <MenuItem value={'RESPONSÁVEL'} selected>RESPONSÁVEL</MenuItem>
+                                    <MenuItem value={'CONVÊNIO'}>CONVÊNIO</MenuItem>
+                                </Select>
                             </FormControl>
                         </Grid>
                     </Grid>
@@ -87,6 +94,5 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
                 </Box>
             </form>
         </Modal>
-
     );
 }

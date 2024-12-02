@@ -22,9 +22,9 @@ export const Registers = () => {
             <Grid item xl={3} lg={3} md={3} sm={3} xs={3} mr={3}>
                 <Box>
                     <IconButton sx={{
-                        width: 350,
-                        height: 350,
-                        color: 'black'
+                        width: 250,
+                        height: 250,
+                        color: '#615f63'
                     }}
                     onClick={goStudents}
                     >
@@ -35,14 +35,13 @@ export const Registers = () => {
                             <Typography>Clientes</Typography>
                         </Box>
                     </IconButton>
-
                 </Box>
             </Grid>
             <Grid item xl={3} lg={3} md={3} sm={3} xs={3} mr={3}>
                 <IconButton sx={{
-                    width: 350,
-                    height: 350,
-                    color: 'black'
+                    width: 250,
+                    height: 250,
+                    color: '#615f63'
                 }}
                 onClick={goProfessional}
                 >
