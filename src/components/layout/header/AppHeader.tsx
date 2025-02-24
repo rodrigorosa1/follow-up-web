@@ -390,6 +390,7 @@ export const AppHeader = (props: Props) => {
                 <Divider />
                 <Sidebar
                     handleDrawerClose={handleDrawerClose}
+                    currentUser={currentUser}
                 />
             </Drawer>
             {renderMenu}

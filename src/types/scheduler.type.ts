@@ -23,8 +23,9 @@ export interface IEvent {
     student?: any;
     professional?: any;
     skill?: any;
-    skills: any;
+    skills?: any;
     selectedValues?: any;
     procedures?: any;
     weekDays?: any;
+    timeSlots?: any;
 }

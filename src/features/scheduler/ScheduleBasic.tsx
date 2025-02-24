@@ -2,20 +2,20 @@ import * as React from "react"
 import { IEvent, Iselection } from "../../types/scheduler.type";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { deleteAllEvents, deleteEvent, getEventslId, postEvents } from "../../services/event.service";
-import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, SelectChangeEvent, Stack } from "@mui/material";
+import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, LinearProgress, Card, CardHeader, Checkbox, Divider, List, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
 import { isEmptyArray, useFormik } from "formik";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { HourMask } from "../../components/masks/InputMask";
-import { EventBusy, PlaylistRemove, ReplyOutlined, Save } from "@mui/icons-material";
+import { AddCircle, EventBusy, PlaylistRemove, RemoveCircle, ReplyOutlined, Save } from "@mui/icons-material";
 import { getActiveProfessionals } from "../../services/professional.service";
 import { getActiveStudents } from "../../services/student.service";
-import { getProceduresManySkills, getSkills, getSkillsSpecialty } from "../../services/skill.service";
+import { getProcedures, getSkills, getSkillsSpecialty } from "../../services/skill.service";
 import IProcedure from "../../types/procedure.type";
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { getSpecialties } from "../../services/specialty.service";
 import ISpecialty from "../../types/specialty.type";
+import { ScheduleProcedures } from "./ScheduleProcedures";
 
 function not(a: readonly IProcedure[], b: readonly IProcedure[]) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -40,8 +40,9 @@ export const ScheduleBasic = () => {
         end_hour: '',
         period: '',
         repeat: 'NÃO',
-        skills: [],
-        weekDays: []
+        skill: '',
+        weekDays: [],
+        timeSlots: [{ start_hour: "", end_hour: "" }],
     }
 
     const [skills, setSkills] = React.useState<Iselection[]>([]);
@@ -56,13 +57,13 @@ export const ScheduleBasic = () => {
     const [snackbarError, setSnackbarError] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [openE, setOpenE] = React.useState(false);
-    const [skillsSelected, setSkillsSelected] = React.useState<Iselection[]>([]);
     const [procedures, setProcedures] = React.useState<readonly IProcedure[]>([]);
     const [proceduresSelected, setProceduresSelected] = React.useState<readonly IProcedure[]>([]);
     const [checked, setChecked] = React.useState<readonly IProcedure[]>([]);
     const [weekDaysSelected, setWeekDaysSelected] = React.useState<Iselection[]>([]);
     const leftChecked = intersection(checked, procedures);
     const rightChecked = intersection(checked, proceduresSelected);
+    const [searchTerm, setSearchTerm] = React.useState("");
 
 
     const { id } = useParams();
@@ -136,7 +137,19 @@ export const ScheduleBasic = () => {
 
     const handleSkill = async (event: any) => {
         formik.handleChange(event);
-        setSkillsSelected(event.target.value);
+        const prcds = await getProcedures(event.target.value);
+        if (proceduresSelected.length > 0) {
+            const newProcedures = prcds.filter(
+                (procedure: any) => !proceduresSelected.some((p) => p.id === procedure.id)
+            );
+            if (newProcedures.length > 0) {
+                setProcedures(newProcedures);
+            } else {
+                setProcedures([]);
+            }
+        } else {
+            setProcedures(prcds);
+        }
     }
 
     const handleSpecialty = async (event: any) => {
@@ -147,36 +160,6 @@ export const ScheduleBasic = () => {
     const handleWeekDays = async (event: any) => {
         formik.handleChange(event);
         setWeekDaysSelected(event.target.value);
-    }
-
-    const listProcedures = async () => {
-        if (skillsSelected) {
-            const data = {
-                skills: formatSkillIDs(skillsSelected),
-            }
-            const proceduresApi = await getProceduresManySkills(data);
-            if (procedures.length > 0) {
-                const newProceduresP = proceduresApi.filter(
-                    (procedure: any) => !procedures.some((p) => p.id === procedure.id)
-                );
-                if (newProceduresP.length > 0) {
-                    if (proceduresSelected.length > 0) {
-                        const newProcedures = newProceduresP.filter(
-                            (procedure: any) => !proceduresSelected.some((p) => p.id === procedure.id)
-                        );
-                        if (newProcedures.length > 0) {
-                            setProcedures((prevProcedures) => [...prevProcedures, ...newProcedures]);
-                        }
-                    } else {
-                        setProcedures((prevProcedures) => [...prevProcedures, ...newProceduresP]);
-                    }
-                } else {
-                    setProcedures(proceduresApi);
-                }
-            } else {
-                setProcedures(proceduresApi);
-            }
-        }
     }
 
     const handleToggle = (value: IProcedure) => () => {
@@ -292,7 +275,7 @@ export const ScheduleBasic = () => {
     const formatSkillIDs = (skills: any) => {
         const skill_id: any[] = [];
         skills.map((skill: any) => {
-            skill_id.push(skill.id)
+            skill_id.push(skill)
         })
         return skill_id;
     }
@@ -317,7 +300,8 @@ export const ScheduleBasic = () => {
             period: event.repeat == 'NÃO' ? 1 : event.period,
             skill_id: formatSkillIDs(event.skills),
             procedures: proceduresSelected,
-            dates: formatDatesForWeek(event.start)
+            dates: formatDatesForWeek(event.start),
+            time_slots: event.timeSlots
         }
         return data;
     }
@@ -358,40 +342,65 @@ export const ScheduleBasic = () => {
         return selectedDates;
     }
 
-    const customList = (title: React.ReactNode, items: readonly IProcedure[]) => (
-        <Card>
-            <CardHeader
-                sx={{ px: 2, py: 1 }}
-                avatar={
-                    <Checkbox
-                        onClick={handleToggleAll(items)}
-                        checked={numberOfChecked(items) === items.length && items.length !== 0}
-                        indeterminate={
-                            numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0
-                        }
-                        disabled={items.length === 0}
-                        inputProps={{
-                            'aria-label': 'all items selected',
-                        }}
-                    />
-                }
-                title={title}
-                subheader={`${numberOfChecked(items)}/${items.length} selecionados`}
-            />
-            <Divider />
-            <List
-                sx={{
-                    width: 350,
-                    height: 350,
-                    bgcolor: 'background.paper',
-                    overflow: 'auto',
-                }}
-                dense
-                component="div"
-                role="list"
-            >
-                {items.map((value: any) => {
-                    return (
+    const handleAddTimeSlot = () => {
+        formik.setFieldValue("timeSlots", [
+            ...formik.values.timeSlots,
+            { start_hour: "", end_hour: "" },
+        ]);
+    };
+
+    const handleRemoveTimeSlot = (index: number) => {
+        const updatedSlots = formik.values.timeSlots.filter((_: any, i: any) => i !== index);
+        formik.setFieldValue("timeSlots", updatedSlots);
+    };
+
+    const customList = (title: React.ReactNode, items: readonly IProcedure[]) => {
+        const filteredItems = items.filter(item =>
+            item.objective.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.skill?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        return (
+            <Card>
+                <CardHeader
+                    sx={{ px: 2, py: 1 }}
+                    avatar={
+                        <Checkbox
+                            onClick={handleToggleAll(items)}
+                            checked={numberOfChecked(items) === items.length && items.length !== 0}
+                            indeterminate={
+                                numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0
+                            }
+                            disabled={items.length === 0}
+                            inputProps={{
+                                'aria-label': 'all items selected',
+                            }}
+                        />
+                    }
+                    title={title}
+                    subheader={`${numberOfChecked(items)}/${items.length} selecionados`}
+                />
+                <Divider />
+                <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Buscar..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    sx={{ px: 2, py: 1 }}
+                />
+                <List
+                    sx={{
+                        width: 350,
+                        height: 350,
+                        bgcolor: 'background.paper',
+                        overflow: 'auto',
+                    }}
+                    dense
+                    component="div"
+                    role="list"
+                >
+                    {filteredItems.map((value) => (
                         <ListItemButton
                             key={value.id}
                             role="listitem"
@@ -407,13 +416,13 @@ export const ScheduleBasic = () => {
                                     }}
                                 />
                             </ListItemIcon>
-                            <ListItemText id={value.id} primary={value.objective} secondary={value.skill.name} />
+                            <ListItemText id={value.id} primary={value.objective} secondary={value.skill?.name} />
                         </ListItemButton>
-                    );
-                })}
-            </List>
-        </Card>
-    );
+                    ))}
+                </List>
+            </Card>
+        );
+    };
 
     return (
         dataLoaded === false ? (
@@ -437,28 +446,6 @@ export const ScheduleBasic = () => {
                                     />
                                 </FormControl>
                                 <FormControl sx={{ m: 1, minWidth: 250 }}>
-                                    <TextField
-                                        id="start_hour"
-                                        name="start_hour"
-                                        label="Inicio"
-                                        value={formik.values.start_hour}
-                                        onChange={formik.handleChange}
-                                        InputProps={{ inputComponent: HourMask }}
-                                        required
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ m: 1, minWidth: 250 }}>
-                                    <TextField
-                                        id="end_hour"
-                                        name="end_hour"
-                                        label="Final"
-                                        value={formik.values.end_hour}
-                                        onChange={formik.handleChange}
-                                        InputProps={{ inputComponent: HourMask }}
-                                        required
-                                    />
-                                </FormControl>
-                                <FormControl sx={{ m: 1, minWidth: 250 }}>
                                     <InputLabel>Especialidade</InputLabel>
                                     <Select
                                         label="Especialidade"
@@ -477,8 +464,78 @@ export const ScheduleBasic = () => {
                                             })
                                         }
                                     </Select>
-
                                 </FormControl>
+                                {
+                                    !id ? (
+                                        formik.values.timeSlots.map((slot: any, index: any) => (
+                                            <Grid item key={index}>
+                                                <FormControl sx={{ m: 1, minWidth: 50 }}>
+                                                    <TextField
+                                                        id={`timeSlots.${index}.start_hour`}
+                                                        name={`timeSlots.${index}.start_hour`}
+                                                        label="Início"
+                                                        value={slot.start_hour}
+                                                        onChange={formik.handleChange}
+                                                        InputProps={{ inputComponent: HourMask }}
+                                                        required
+                                                        fullWidth
+                                                    />
+                                                </FormControl>
+                                                <FormControl sx={{ m: 1, minWidth: 50 }}>
+                                                    <TextField
+                                                        id={`timeSlots.${index}.end_hour`}
+                                                        name={`timeSlots.${index}.end_hour`}
+                                                        label="Final"
+                                                        value={slot.end_hour}
+                                                        onChange={formik.handleChange}
+                                                        InputProps={{ inputComponent: HourMask }}
+                                                        required
+                                                    />
+                                                </FormControl>
+                                                {formik.values.timeSlots.length > 1 && (
+                                                    <FormControl sx={{ m: 1 }}>
+                                                        <IconButton onClick={() => handleRemoveTimeSlot(index)} color="error">
+                                                            <RemoveCircle />
+                                                        </IconButton>
+                                                    </FormControl>
+                                                )}
+                                                {index === formik.values.timeSlots.length - 1 && (
+                                                    <FormControl sx={{ m: 1 }}>
+                                                        <IconButton onClick={handleAddTimeSlot} color="primary">
+                                                            <AddCircle />
+                                                        </IconButton>
+                                                    </FormControl>
+                                                )}
+                                            </Grid>
+                                        ))
+
+                                    ) : (
+                                        <Grid item>
+                                            <FormControl sx={{ m: 1, minWidth: 50 }}>
+                                                <TextField
+                                                    id="start_hour"
+                                                    name="start_hour"
+                                                    label="Final"
+                                                    value={formik.values.start_hour}
+                                                    onChange={formik.handleChange}
+                                                    InputProps={{ inputComponent: HourMask }}
+                                                    required
+                                                />
+                                            </FormControl>
+                                            <FormControl sx={{ m: 1, minWidth: 50 }}>
+                                                <TextField
+                                                    id="end_hour"
+                                                    name="end_hour"
+                                                    label="Final"
+                                                    value={formik.values.end_hour}
+                                                    onChange={formik.handleChange}
+                                                    InputProps={{ inputComponent: HourMask }}
+                                                    required
+                                                />
+                                            </FormControl>
+                                        </Grid>
+                                    )
+                                }
                             </Grid>
                         </LocalizationProvider>
                     </Grid>
@@ -621,114 +678,102 @@ export const ScheduleBasic = () => {
                     <Grid item>
                         <Stack sx={{ width: '100%' }} spacing={2}>
                             {!id && (
-                                <Alert severity="info">
+                                <><Alert severity="info">
                                     Filtre os ojetivos pela habilidade. Para agenda, as habildiades salvas serão consideradas pelos objetivos selecionados.
-                                </Alert>
+                                </Alert><Grid container alignItems="center" justifyContent="center">
+                                        <FormControl sx={{ m: 1, minWidth: 800 }}>
+                                            <InputLabel>Habilidades</InputLabel>
+                                            <Select
+                                                label="Habilidades"
+                                                id="skill"
+                                                name="skill_id"
+                                                value={formik.values.student_id}
+                                                onChange={handleSkill}
+                                                fullWidth
+                                                required
+                                            >
+                                                {skills.map((skill) => {
+                                                    return <MenuItem key={skill.id} value={skill.id}>
+                                                        {skill.text}
+                                                    </MenuItem>;
+                                                })}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item>
+                                        <Grid container spacing={2} justifyContent="center" alignItems="center">
+                                            <Grid item>{customList('Objetivos', procedures)}</Grid>
+                                            <Grid item>
+                                                <Grid container direction="column" alignItems="center">
+                                                    <Button
+                                                        sx={{ my: 0.5 }}
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={handleCheckedRight}
+                                                        disabled={leftChecked.length === 0}
+                                                        aria-label="mover para direita"
+                                                    >
+                                                        &gt;
+                                                    </Button>
+                                                    <Button
+                                                        sx={{ my: 0.5 }}
+                                                        variant="outlined"
+                                                        size="small"
+                                                        onClick={handleCheckedLeft}
+                                                        disabled={rightChecked.length === 0}
+                                                        aria-label="mover para esquerda"
+                                                    >
+                                                        &lt;
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                            <Grid item>{customList('Selecionados', proceduresSelected)}</Grid>
+                                        </Grid>
+                                    </Grid>
+                                </>
+
                             )}
-                            <Grid container alignItems="center" justifyContent="center">
-                                <FormControl sx={{ m: 1, minWidth: 700 }}>
-                                    <InputLabel>Habilidades</InputLabel>
-                                    <Select
-                                        label="Habilidades"
-                                        id="skills"
-                                        name="skills"
-                                        multiple
-                                        fullWidth
-                                        value={formik.values.skills}
-                                        onChange={handleSkill}
-                                        onBlur={formik.handleBlur}
-                                        renderValue={(selected: any) => (
-                                            <div>
-                                                {selected.map((value: any) => (
-                                                    <Chip key={value.id} label={value.text as string} />
-                                                ))}
-                                            </div>
-                                        )}
-                                    >
-                                        {skills.map((skill: any) => (
-                                            <MenuItem key={skill.id} value={skill}>{skill.text}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                                {!id && (
-                                    <IconButton
-                                        onClick={listProcedures}
-                                        title="Carregar"
-                                    >
-                                        <RefreshIcon />
-                                    </IconButton>
-                                )}
-                            </Grid>
+
                         </Stack>
                     </Grid>
-                    {!id && (
-                        <Grid item>
-                            <Grid container spacing={2} justifyContent="center" alignItems="center">
-                                <Grid item>{customList('Objetivos', procedures)}</Grid>
-                                <Grid item>
-                                    <Grid container direction="column" alignItems="center">
-                                        <Button
-                                            sx={{ my: 0.5 }}
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={handleCheckedRight}
-                                            disabled={leftChecked.length === 0}
-                                            aria-label="mover para direita"
-                                        >
-                                            &gt;
-                                        </Button>
-                                        <Button
-                                            sx={{ my: 0.5 }}
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={handleCheckedLeft}
-                                            disabled={rightChecked.length === 0}
-                                            aria-label="mover para esquerda"
-                                        >
-                                            &lt;
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                                <Grid item>{customList('Selecionados', proceduresSelected)}</Grid>
-                            </Grid>
-                        </Grid>
-                    )}
                     {
                         id ? (
+                            <>
+                            <ScheduleProcedures />
                             <Grid item sx={{
-                                marginTop: 2,
-                            }}>
-                                <Grid container alignItems="center" justifyContent="center">
-                                    <Grid item alignContent="right" xl={4} lg={4} md={4} sm={4} xs={4}>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={handleOpen}
-                                            startIcon={<EventBusy />}>
-                                            Cancelar esta agenda
-                                        </Button>
+                                    marginTop: 2,
+                                }}>
+                                    <Grid container alignItems="center" justifyContent="center">
+                                        <Grid item alignContent="right" xl={4} lg={4} md={4} sm={4} xs={4}>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={handleOpen}
+                                                startIcon={<EventBusy />}>
+                                                Cancelar esta agenda
+                                            </Button>
+                                        </Grid>
+                                        <Grid item alignContent="right" xl={4} lg={4} md={4} sm={4} xs={4}>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={handleOpenE}
+                                                startIcon={<PlaylistRemove />}>
+                                                Cancelar relacionadas
+                                            </Button>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item alignContent="right" xl={4} lg={4} md={4} sm={4} xs={4}>
-                                        <Button
-                                            variant="contained"
-                                            color="secondary"
-                                            onClick={handleOpenE}
-                                            startIcon={<PlaylistRemove />}>
-                                            Cancelar relacionadas
-                                        </Button>
+                                    <Grid container alignItems="right" justifyContent="right">
+                                        <Grid item alignContent="center" xl={1} lg={1} md={1} sm={1} xs={1}>
+                                            <IconButton
+                                                title="Voltar"
+                                                onClick={historyBack}
+                                            >
+                                                <ReplyOutlined />
+                                            </IconButton>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                                <Grid container alignItems="right" justifyContent="right">
-                                    <Grid item alignContent="center" xl={1} lg={1} md={1} sm={1} xs={1}>
-                                        <IconButton
-                                            title="Voltar"
-                                            onClick={historyBack}
-                                        >
-                                            <ReplyOutlined />
-                                        </IconButton>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+                                </Grid></>
                         ) : (
                             <Grid item sx={{
                                 marginTop: 2,

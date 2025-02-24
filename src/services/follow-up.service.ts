@@ -38,3 +38,21 @@ export const getSkllsStudent = (student_id: any) => {
             return error;
         });
 }
+
+export const dashSpecialtiesHelp = (data: any) => {
+    return axios.post(API_URL + 'follow-up/dashboard-specialty',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
+export const skillsGoal = (data: any) => {
+    return axios.post(API_URL + 'follow-up/dashboard-skills',
+        data, { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}

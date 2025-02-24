@@ -1,19 +1,19 @@
 import * as React from "react"
 import IProcedure from "../../types/procedure.type";
 import { HiPencilSquare, HiXCircle } from "react-icons/hi2";
-import { Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
-import { getEventProcedureStudent, getEventslId, removeEventProcedures } from "../../services/event.service";
+import { Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, FormControl, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Paper, Select, Snackbar } from "@mui/material";
+import { useParams } from 'react-router-dom';
+import { getEventProcedureStudent, getEventslId, removeEventProcedures, removeEventSkill } from "../../services/event.service";
 import { ProcedureDetails } from "./ProcedureDetails";
 import ISkill from "../../types/skill.type";
-import { ReplyOutlined } from "@mui/icons-material";
 import AddIcon from '@mui/icons-material/Add';
 import { ProcedureSelection } from "./ProcedureSelection";
 import { getProcedures, getSkills } from "../../services/skill.service";
 import { SkillSelection } from "./SkillSelection";
+import { GridColDef } from "@mui/x-data-grid";
+import { CustomDataGrid } from "../../components/data-grid/custom";
 
 export const ScheduleProcedures = () => {
-    let navigate: NavigateFunction = useNavigate();
     const { id } = useParams();
     const [skills, setSkills] = React.useState<any[]>([]);
     const [allSkills, setAllSkills] = React.useState<ISkill[]>([]);
@@ -22,12 +22,14 @@ export const ScheduleProcedures = () => {
     const [dataLoaded, setDataLoaded] = React.useState(false);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
-    const [snackbarError] = React.useState(false);
     const [selectedProcedure, setSelectedProcedure] = React.useState<IProcedure | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
     const [isPrcModal, setIsPrcModal] = React.useState(false);
     const [isSkillModal, setIsSkillModal] = React.useState(false);
     const [open, setOpen] = React.useState(false);
+    const [openSkillRemove, setOpenSkillRemove] = React.useState(false);
+    const [removeSkill, setRemoveSkill] = React.useState<any>();
+    const [snackbarError, setSnackbarError] = React.useState(false);
     const [remove, setRemove] = React.useState<IProcedure>();
     const [allProcedures, setAllProcedures] = React.useState<IProcedure[]>([]);
 
@@ -81,8 +83,8 @@ export const ScheduleProcedures = () => {
         setAllProcedures(allProcedures);
     }
 
-    const historyBack = () => {
-        navigate("/scheduler");
+    const onSnackbarMessage = (message: string) => {
+        setSnackbarMessage(message);
     }
 
     const handleSnackbarClose = () => {
@@ -90,10 +92,12 @@ export const ScheduleProcedures = () => {
     };
 
     const openAddPrc = () => {
+        setSnackbarError(false);
         setIsPrcModal(true);
     }
 
     const openAddSkill = () => {
+        setSnackbarError(false);
         setIsSkillModal(true);
     }
 
@@ -108,6 +112,7 @@ export const ScheduleProcedures = () => {
     };
 
     const handleOpen = (procedure: IProcedure) => {
+        setSnackbarError(false);
         setRemove(procedure);
         setOpen(true);
     };
@@ -116,14 +121,47 @@ export const ScheduleProcedures = () => {
         setOpen(false);
     }
 
+
+    const handleOpenSkill = (skill: any) => {
+        setRemoveSkill(skill);
+        setOpenSkillRemove(true);
+    };
+
+    const handleCloseSkill = () => {
+        setOpenSkillRemove(false);
+    }
+
     const handleRemoveProcedure = () => {
         if (remove?.id) {
+            setSnackbarError(false);
             removeEventProcedures(remove.id);
             getAllSkills();
             getSkill();
             handleClose();
-            setSnackbarMessage('Objetivo removido da agendas')
+            setSnackbarMessage('Objetivo removido das agendas')
             handleSnackbarOpen();
+        }
+    }
+
+    const handleRemoveSkill = () => {
+        if (removeSkill?.id) {
+            removeEventSkill(removeSkill.id).then((r) => {
+                if (r === true) {
+                    setSnackbarError(false);
+                    setSnackbarMessage('Habilidade removida das agendas')
+                    handleSnackbarOpen();
+                    getAllSkills();
+                    getSkill();
+                    handleCloseSkill();
+                } else {
+                    setSnackbarError(true);
+                    setSnackbarMessage(r.response.data.detail);
+                    handleSnackbarOpen();
+                    handleCloseSkill();
+                }
+            }).catch((e) => {
+                console.error(e);
+            });
         }
     }
 
@@ -131,6 +169,45 @@ export const ScheduleProcedures = () => {
         getAllSkills();
         getSkill();
     }
+
+    const columns: GridColDef[] = [
+        {
+            field: 'name',
+            headerName: 'Nome',
+            width: 320,
+            headerClassName: 'header-datagrid-prof',
+        },
+        {
+            field: 'objective',
+            headerName: 'Obejtivo',
+            width: 600,
+            headerClassName: 'header-datagrid-prof',
+        },
+        {
+            field: 'id',
+            headerName: '...',
+            width: 150,
+            renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton>
+                        <HiPencilSquare
+                            size={18}
+                            color='grey'
+                            onClick={() => handlePrcdClick(params.row)}
+                        />
+                    </IconButton>
+                    <IconButton>
+                        <HiXCircle
+                            size={18}
+                            color='grey'
+                            onClick={() => handleOpen(params.row)}
+                        />
+                    </IconButton>
+                </div>
+            ),
+            headerClassName: 'header-datagrid-prof',
+        },
+    ];
 
     React.useEffect(() => {
         dataPage();
@@ -151,6 +228,7 @@ export const ScheduleProcedures = () => {
                             schedule_id={id}
                             onClose={handleCloseSkillModal}
                             onSnackbarOpen={handleSnackbarOpen}
+                            onSnackbarMessage={onSnackbarMessage}
                             getSkill={getSkill}
                         />
                     )}
@@ -169,9 +247,20 @@ export const ScheduleProcedures = () => {
                             procedures={allProcedures}
                             onClose={handleClosePrcModal}
                             onSnackbarOpen={handleSnackbarOpen}
+                            onSnackbarMessage={onSnackbarMessage}
                             getSkill={getSkill}
                         />
                     )}
+                </Grid>
+                <Grid item>
+                    <Paper variant="outlined" sx={{ px: 2, py: 1, mx: 2, my: 1 }}>
+                        <Box sx={{ px: 2, py: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                            {skills.map((tag, index) => (
+                                <Chip key={index} label={tag.skill_name} onDelete={() => handleOpenSkill(tag)} />
+                            ))}
+                        </Box>
+                    </Paper>
+
                 </Grid>
                 <Grid item>
                     <Grid container alignItems="left" justifyContent="left">
@@ -200,7 +289,7 @@ export const ScheduleProcedures = () => {
                         >
                             {
                                 skills.map((skill) => {
-                                    return <MenuItem key={skill.id} value={skill}>
+                                    return <MenuItem key={skill.skill_id} value={skill}>
                                         {skill.skill_name}
                                     </MenuItem>
                                 })
@@ -223,73 +312,19 @@ export const ScheduleProcedures = () => {
                 </Grid>
                 <Grid item>
                     <Grid container alignItems="center" justifyContent="center">
-                        <Grid item xl={10} lg={10} md={10} sm={12} xs={12} sx={{ m: 2 }}>
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 400 }} aria-label="responsáveis" size='small'>
-                                    <TableHead
-                                        sx={{
-                                            backgroundColor: '#edf5f3',
-                                        }}>
-                                        <TableRow>
-                                            <TableCell>Objetivo</TableCell>
-                                            <TableCell>Descrição</TableCell>
-                                            <TableCell>Habilidade</TableCell>
-                                            <TableCell align="center"></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {procedures.map((row) => (
-                                            <TableRow
-                                                key={row.name}
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                            >
-                                                <TableCell component="th" scope="row">
-                                                    {row.name}
-                                                </TableCell>
-                                                <TableCell component="th" scope="row">
-                                                    {row.objective}
-                                                </TableCell>
-                                                <TableCell component="th" scope="row">
-                                                    <div>
-                                                        <Chip
-                                                            label={row.skill_name}
-                                                            color='default'
-                                                        />
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    <IconButton>
-                                                        <HiPencilSquare
-                                                            size={18}
-                                                            color='grey'
-                                                            onClick={() => handlePrcdClick(row)}
-                                                        />
-                                                    </IconButton>
-                                                    <IconButton>
-                                                        <HiXCircle
-                                                            size={18}
-                                                            color='grey'
-                                                            onClick={() => handleOpen(row)}
-                                                        />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <Grid container alignItems="right" justifyContent="right">
-                        <Grid item alignContent="center" xl={1} lg={1} md={1} sm={1} xs={1}>
-                            <IconButton
-                                title="Voltar"
-                                onClick={historyBack}
+                        <Grid item xl={12} lg={12} md={12} sm={12} xs={12} sx={{ m: 2 }}>
+                            <Box
+                                sx={{
+                                    height: 400,
+                                    width: '100%',
+                                }}
                             >
-                                <ReplyOutlined />
-                            </IconButton>
+                                <CustomDataGrid
+                                    columns={columns}
+                                    rows={procedures}
+                                    pagination={5}
+                                />
+                            </Box>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -313,6 +348,31 @@ export const ScheduleProcedures = () => {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+                <Dialog open={openSkillRemove} onClose={handleCloseSkill}>
+                    <DialogTitle>Confirmação de alteração</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Esta ação removerá a habilidade de todas as agendas relacionadas do cliente.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseSkill} color="primary">
+                            Cancelar
+                        </Button>
+                        <Button
+                            onClick={() => handleRemoveSkill()}
+                            color="primary"
+                            autoFocus
+                        >
+                            Sim
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+
+
+
                 <Box>
                     <Snackbar
                         open={snackbarOpen}

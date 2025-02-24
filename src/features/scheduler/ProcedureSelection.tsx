@@ -24,10 +24,11 @@ interface ModalSelectProps {
     procedures: IProcedure[];
     onClose: () => void;
     onSnackbarOpen: () => void;
+    onSnackbarMessage: (message: string) => void;
     getSkill: () => void;
 }
 
-export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id, procedures, onClose, onSnackbarOpen, getSkill }) => {
+export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id, procedures, onClose, onSnackbarOpen, onSnackbarMessage, getSkill }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -50,10 +51,12 @@ export const ProcedureSelection: React.FC<ModalSelectProps> = ({ isOpen, schedul
         enableReinitialize: true,
         initialValues: initial,
         onSubmit: (values) => {
+            onSnackbarMessage('Objetivo adicionado');
             onSnackbarOpen();
             addEventsProcedures(schedule_id, values);
             getSkill();
             onClose();
+            handleClose();
         }
     });
 

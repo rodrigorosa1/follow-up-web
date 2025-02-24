@@ -3,11 +3,9 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { useParams } from "react-router-dom";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
 import { Box, Card, Grid } from "@mui/material";
 import { ScheduleBasic } from "./ScheduleBasic";
-import { ScheduleProcedures } from "./ScheduleProcedures";
 
 export const ScheduleDetails = () => {
     const [value, setValue] = React.useState('1');
@@ -15,8 +13,6 @@ export const ScheduleDetails = () => {
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
-
-    const { id } = useParams();
 
     return (
         <Grid
@@ -46,18 +42,10 @@ export const ScheduleDetails = () => {
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleChange}>
                                     <Tab label="Dados da Agenda" value="1" wrapped />
-                                    {id ? (
-                                        <Tab label="Objetivos" value="2" />
-                                    ) : (
-                                        <Tab label="Objetivos" value="2" disabled />
-                                    )}
                                 </TabList>
                             </Box>
                             <TabPanel value="1">
                                 <ScheduleBasic />
-                            </TabPanel>
-                            <TabPanel value="2">
-                                <ScheduleProcedures />
                             </TabPanel>
                         </TabContext>
                     </Box>

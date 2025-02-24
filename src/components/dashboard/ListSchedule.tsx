@@ -36,7 +36,6 @@ export const ListSchedule: React.FC<any> = ({ events }) => {
             <TableCell>Horário</TableCell>
             <TableCell>Cliente</TableCell>
             <TableCell>Profissional</TableCell>
-            <TableCell align="right">Abrir</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -75,15 +74,6 @@ export const ListSchedule: React.FC<any> = ({ events }) => {
                   )}
                   {row.instructor.fullname}
                 </div>
-              </TableCell>
-              <TableCell align="right">
-                <IconButton>
-                  <HiOutlineCalendar
-                    size={20}
-                    color='grey'
-                  // onClick={() => goDetails(params.row.id)}
-                  />
-                </IconButton>
               </TableCell>
             </TableRow>
           ))}
