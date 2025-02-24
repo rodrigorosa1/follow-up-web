@@ -1,29 +1,28 @@
 import { grey } from "@mui/material/colors";
 import {
     GridToolbarContainer,
-    GridToolbarColumnsButton,
     GridToolbarFilterButton,
-    GridToolbarDensitySelector,
     DataGrid,
     GridRowSpacingParams,
-    gridClasses,
+    gridClasses,    
     GridLocaleText
 } from "@mui/x-data-grid";
 import { useCallback } from "react";
 
 
 interface DataGridProps {
-    columns: any,
-    rows: any
+    columns: any;
+    rows: any;
+    pagination?: number;
 }
 
 
 export const CustomToolbar = () => {
     return (
         <GridToolbarContainer>
-            <GridToolbarColumnsButton />
+            {/* <GridToolbarColumnsButton /> */}
             <GridToolbarFilterButton />
-            <GridToolbarDensitySelector />
+            {/* <GridToolbarDensitySelector /> */}
         </GridToolbarContainer>
     );
 }
@@ -182,7 +181,7 @@ export const GRID_DEFAULT_LOCALE_TEXT: GridLocaleText = {
 };
 
 
-export const CustomDataGrid: React.FC<DataGridProps> = ({ columns, rows }) => {
+export const CustomDataGrid: React.FC<DataGridProps> = ({ columns, rows, pagination }) => {
     const getRowSpacing = useCallback((params: GridRowSpacingParams) => {
         return {
             top: params.isFirstVisible ? 0 : 5,
@@ -210,7 +209,7 @@ export const CustomDataGrid: React.FC<DataGridProps> = ({ columns, rows }) => {
             initialState={{
                 pagination: {
                     paginationModel: {
-                        pageSize: 10,
+                        pageSize: pagination ? pagination : 10,
                     },
                 }
             }}

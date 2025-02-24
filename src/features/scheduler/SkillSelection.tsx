@@ -24,10 +24,11 @@ interface ModalSelectProps {
     skills: ISkill[];
     onClose: () => void;
     onSnackbarOpen: () => void;
+    onSnackbarMessage: (message: string) => void;
     getSkill: () => void;
 }
 
-export const SkillSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id, skills, onClose, onSnackbarOpen, getSkill }) => {
+export const SkillSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id, skills, onClose, onSnackbarOpen, onSnackbarMessage, getSkill }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -50,10 +51,12 @@ export const SkillSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id
         enableReinitialize: true,
         initialValues: initial,
         onSubmit: (values) => {
+            onSnackbarMessage('Habilidade adicionada');
             onSnackbarOpen();
             addEventsSkill(schedule_id, values);
             getSkill();
             onClose();
+            handleClose();
         }
     });
 
@@ -62,7 +65,7 @@ export const SkillSelection: React.FC<ModalSelectProps> = ({ isOpen, schedule_id
             <form onSubmit={formik.handleSubmit}>
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Selecione o objetivo
+                        Selecione a Habilidade
                     </Typography>
                     <Grid item sx={{ m: 2 }}>
                         <Grid container>

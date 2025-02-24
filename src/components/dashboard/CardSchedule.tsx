@@ -2,7 +2,6 @@ import * as React from 'react';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
-// import moment from 'moment-timezone';
 import moment from 'moment'
 import 'moment/locale/pt-br';
 import { Chip } from '@mui/material';
@@ -12,8 +11,13 @@ function preventDefault(event: React.MouseEvent) {
 }
 
 export const CardSchedule: React.FC<any> = ({ total }) => {
-    const dataNow = moment().locale('pt-br'); // Define o idioma da data
+    const dataNow = moment().locale('pt-br');
     const dtExtension = dataNow.format('D [de] MMMM [de] YYYY')
+    let navigate: NavigateFunction = useNavigate();
+
+    const goScheduler = () => {
+        navigate("/scheduler");
+    };
 
     return (
         <React.Fragment>
@@ -37,7 +41,7 @@ export const CardSchedule: React.FC<any> = ({ total }) => {
                 agendas
             </Typography>
             <div className='homeCardScheduleLink'>
-                <Chip label="Abrir" onClick={preventDefault} />
+                <Chip label="Abrir" onClick={goScheduler} />
 
                 {/* <Link color="primary" href="#" onClick={preventDefault}>
 

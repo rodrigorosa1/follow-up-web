@@ -6,16 +6,21 @@ import {
     HiOutlineAdjustmentsHorizontal,
     HiOutlineCurrencyDollar,
     HiOutlinePaperAirplane,
-    HiHome
+    HiHome,
+    HiBuildingOffice2
 } from "react-icons/hi2";
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { Box, Divider, Grid, List, ListItem, ListItemButton, Typography } from "@mui/material";
+import IUser from "../../types/user.type";
+import { ProfileEnum } from "../../helpers/Enums/profile.enum";
+
 
 interface Props {
     handleDrawerClose: () => void;
+    currentUser: IUser
 }
 
-export const Sidebar: React.FC<Props> = ({ handleDrawerClose}) => {
+export const Sidebar: React.FC<Props> = ({ handleDrawerClose, currentUser }) => {
     let navigate: NavigateFunction = useNavigate();
 
     const goHome = () => {
@@ -58,6 +63,11 @@ export const Sidebar: React.FC<Props> = ({ handleDrawerClose}) => {
         navigate("/finance");
     };
 
+    const goCompanies = () => {
+        handleDrawerClose();
+        navigate("/comercial/companies");
+    };
+
     const stlyeMenuItem = {
         height: 80,
         justifyContent: 'center',
@@ -90,6 +100,22 @@ export const Sidebar: React.FC<Props> = ({ handleDrawerClose}) => {
                         </Grid>
                     </ListItemButton>
                 </ListItem>
+                {currentUser.permission === ProfileEnum.OWER && (
+                    <ListItem sx={stlyeMenuItem} className="items-item">
+                        <ListItemButton style={styleMenuButton} onClick={goCompanies} >
+                            <Grid container justifyContent="center">
+                                <Grid item>
+                                    <HiBuildingOffice2 size={20} />
+                                </Grid>
+                                <Grid container justifyContent="center">
+                                    <Grid item>
+                                        <Typography>Comercial</Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </ListItemButton>
+                    </ListItem>
+                )}
                 <ListItem sx={stlyeMenuItem} className="items-item">
                     <ListItemButton style={styleMenuButton} onClick={goFollowUp}>
                         <Grid container justifyContent="center">

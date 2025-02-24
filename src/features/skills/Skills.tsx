@@ -111,7 +111,6 @@ export const Skills = () => {
                         columns={columns}
                         rows={skills}
                     />
-
                 </Box>
             </Grid>
         </Grid>
