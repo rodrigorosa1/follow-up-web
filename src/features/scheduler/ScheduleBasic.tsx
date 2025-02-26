@@ -686,8 +686,8 @@ export const ScheduleBasic = () => {
                                             <Select
                                                 label="Habilidades"
                                                 id="skill"
-                                                name="skill_id"
-                                                value={formik.values.student_id}
+                                                name="skill"
+                                                value={formik.values.skill}
                                                 onChange={handleSkill}
                                                 fullWidth
                                                 required
