@@ -21,6 +21,15 @@ export const getCompanyId = (id: string) => {
         });
 }
 
+export const companyForUserLogged = () => {
+    return axios.get(API_URL + 'user/logged',
+        { headers: authHeader() }).then((resp) => {
+            return resp.data;
+        }).catch((error) => {
+            return error;
+        });
+}
+
 export const createCompany = (data: any) => {
     return axios.post(API_URL,
         data, { headers: authHeader() }).then((resp) => {

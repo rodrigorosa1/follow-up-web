@@ -18,12 +18,15 @@ import { getStudentsId } from "../../../services/student.service";
 import SwapHoriz from '@mui/icons-material/SwapHoriz';
 import { BillingTypeChange } from "./BillingTypeChange";
 import { BillingInvoiceGenerate } from "./BillingInvoiceGenerate";
+import ISpecialty from "../../../types/specialty.type";
+import { getSpecialties } from "../../../services/specialty.service";
 
 export const BillingsCustomer = () => {
     let navigate: NavigateFunction = useNavigate();
     const [billings, setBillings] = React.useState<IBilling[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [specialties, setSpecialties] = React.useState<ISpecialty[]>([]);
     const [dataLoaded, setDataLoaded] = React.useState(false);
     const [student, setStudent] = React.useState<IStudent>();
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -66,13 +69,20 @@ export const BillingsCustomer = () => {
         setPage(0);
     };
 
+    const specialtyList = async () => {
+        const list = await getSpecialties();
+        setSpecialties(list);
+    }
+
 
     const formatPayload = (form: any) => {
         const status = form.status ? (form.status) : null;
+        const specialty_id = form.specialty_id !== 'TODAS' ? (form.specialty_id) : null;
         const formattedStart = new Date(form.start).toISOString().split('T')[0];
         const formattedEnd = new Date(form.end).toISOString().split('T')[0];
         const data = {
             student_id: student_id,
+            specialty_id: specialty_id,
             status: status,
             start: formattedStart,
             end: formattedEnd
@@ -145,6 +155,10 @@ export const BillingsCustomer = () => {
         startResume();
     }, []);
 
+    React.useEffect(() => {
+        specialtyList();
+    }, []);
+
 
     const studentInfo = async (id: string) => {
         const student = await getStudentsId(id);
@@ -155,6 +169,7 @@ export const BillingsCustomer = () => {
         enableReinitialize: true,
         initialValues: {
             student: null,
+            specialty_id: 'TODAS',
             status: dataDetails.status ? dataDetails.status : "PREVISTO",
             start: dataDetails.start ? dataDetails.start : new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
             end: dataDetails.end ? dataDetails.end : new Date(new Date().setDate(new Date().getDate() + 60)).toISOString().split('T')[0]
@@ -403,6 +418,31 @@ export const BillingsCustomer = () => {
                                         marginTop: 1,
                                         marginBottom: 1
                                     }}>
+                                        <InputLabel>Especialidade</InputLabel>
+                                        <Select
+                                            label="Especialidade"
+                                            id="specialty_id"
+                                            name="specialty_id"
+                                            value={formik.values.specialty_id}
+                                            onChange={formik.handleChange}
+                                            fullWidth
+                                            size="small"
+                                        >
+                                            <MenuItem value={'TODAS'} selected>TODAS</MenuItem>
+                                            {
+                                                specialties.map((specialty: any) => {
+                                                    return <MenuItem key={specialty.id} value={specialty.id}>
+                                                        {specialty.name}
+                                                    </MenuItem>
+                                                })
+                                            }
+                                        </Select>
+                                    </Grid>
+                                    <Grid item xl={3} lg={3} md={3} sm={3} xs={3} sx={{
+                                        marginLeft: 5,
+                                        marginTop: 1,
+                                        marginBottom: 1
+                                    }}>
                                         <InputLabel>Status</InputLabel>
                                         <Select
                                             label="Status"
@@ -414,12 +454,14 @@ export const BillingsCustomer = () => {
                                             required
                                             size="small"
                                         >
-                                            <MenuItem value={'PREVISTO'} selected>Previsto</MenuItem>
-                                            <MenuItem value={'CONFIRMADO'}>Confirmado</MenuItem>
-                                            <MenuItem value={'FEITO'}>Feito</MenuItem>
+                                            <MenuItem value={'PREVISTO'} selected>PREVISTO</MenuItem>
+                                            <MenuItem value={'CONFIRMADO'}>CONFIRMADO</MenuItem>
+                                            <MenuItem value={'FEITO'}>FEITO</MenuItem>
                                         </Select>
                                     </Grid>
-                                    <Grid item xl={2} lg={2} md={1} sm={1} xs={1}>
+                                </Grid>
+                                <Grid container alignItems="right" justifyContent="right">
+                                    <Grid item alignContent="center" xl={1} lg={1} md={1} sm={1} xs={1}>
                                         <div className="buttonPaperFilters">
                                             <IconButton
                                                 type="submit"
@@ -510,23 +552,6 @@ export const BillingsCustomer = () => {
                                 <TableCell colSpan={7}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <Typography variant="subtitle1">Com selecionados:</Typography>
-
-                                        <Select
-                                            value={status}
-                                            onChange={handleStatusChange}
-                                            displayEmpty
-                                            size="small"
-                                            style={{ minWidth: 120 }}
-                                        >
-                                            <MenuItem value="">
-                                                <em>Alterar Status</em>
-                                            </MenuItem>
-                                            <MenuItem value="PREVISTO">Previsto</MenuItem>
-                                            <MenuItem value="CONFIRMADO">Confirmado</MenuItem>
-                                            <MenuItem value="FEITO">Feito</MenuItem>
-                                            <MenuItem value="CANCELADO">Cancelado</MenuItem>
-                                        </Select>
-
                                         <Select
                                             value={generateInvoice}
                                             onChange={handleGenerateInvoice}

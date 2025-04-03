@@ -26,7 +26,7 @@ export const Configurations = () => {
                     height: 250,
                     color: '#615f63'
                 }}
-                // onClick={goCompany}
+                onClick={goCompany}
                 >
                     <Box>
                         <LuBuilding

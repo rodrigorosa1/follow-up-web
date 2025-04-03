@@ -4,7 +4,7 @@ export interface IHealthPlan {
     fantasy_name: string,
     document: string,
     address: string,
-    number_address: string,
+    number: string,
     complement: string | null,
     zip_code: string,
     district: string,

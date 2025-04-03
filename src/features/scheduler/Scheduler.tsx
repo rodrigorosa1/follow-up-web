@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Box, Grid, LinearProgress } from "@mui/material";
+import { Grid } from "@mui/material";
 import { getEvents } from "../../services/event.service";
 import { IEvent, Iselection } from "../../types/scheduler.type";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
 import { HomeCalendar } from "../../components/scheduler/Calendar";
+import { PageLoad } from "../../components/animations/PageLoad";
 
 export const ComponetScheduler = () => {
     const [events, setEvents] = useState<IEvent[]>([]);
@@ -70,9 +71,7 @@ export const ComponetScheduler = () => {
             <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
                 {
                     dataLoaded === false ? (
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box>
+                       <PageLoad />
                     ) : (
                         <HomeCalendar
                             events={events}

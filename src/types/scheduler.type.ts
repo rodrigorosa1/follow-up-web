@@ -6,26 +6,21 @@ export interface Iselection {
 
 export interface IEvent {
     id?: string;
+    start_in?: string;
     event_id?: string;
     title?: string;
-    specialty_id?: string;
-    skill_id?: string;
     student_id: string;
-    instructor_id: string;
     details?: string;
     start: string;
-    end: string;
-    start_hour: string;
-    end_hour: string;
+    end?: Date;
+    start_hour?: string;
+    end_hour?: string;
     period: string;
     repeat: string;
     status?: string;
     student?: any;
-    professional?: any;
     skill?: any;
     skills?: any;
     selectedValues?: any;
-    procedures?: any;
-    weekDays?: any;
-    timeSlots?: any;
+    slots: any;
 }
