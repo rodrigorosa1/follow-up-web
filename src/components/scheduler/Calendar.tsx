@@ -26,7 +26,7 @@ export const HomeCalendar: React.FC<SchedulerProps> = ({ events }) => {
     }
 
     const handleEventClick = (eventInfo: any) => {
-        navigate('/scheduler/' + eventInfo.event.extendedProps._id);
+        navigate('/scheduler/' + eventInfo.event.extendedProps.event_id);
     };
 
     return (

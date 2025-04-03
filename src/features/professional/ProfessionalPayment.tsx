@@ -19,7 +19,7 @@ export const ProfessionalPayment = () => {
         comission: null,
         key: '',
         bank_number: null,
-        bank: '',
+        bank_branch: '',
         account_number: '',
         account_digit: null
     }
@@ -52,6 +52,7 @@ export const ProfessionalPayment = () => {
                         value: formatCurrency(professional.value),
                         comission: professional.comission,
                         bank_number: dataPay.bank_number,
+                        bank_branch: dataPay.bank_branch,
                         account_number: dataPay.account_number,
                         key: dataPay.key,
                     }
@@ -83,6 +84,7 @@ export const ProfessionalPayment = () => {
             comission: values.comission,
             key: values.key,
             bank_number: values.bank_number,
+            bank_branch: values.bank_branch,
             account_number: values.account_number,
             bank: values.bank,
             account_digit: values.account_digit,
@@ -213,30 +215,31 @@ export const ProfessionalPayment = () => {
                                     <MenuItem value={'COMISSÃO'}>Comissão</MenuItem>
                                 </Select>
                             </FormControl>
-                            {formik.values.mode_payment === 'COMISSÃO' ? (
+                            {formik.values.mode_payment === 'COMISSÃO' && (
                                 <FormControl sx={{ m: 1, minWidth: 150 }}>
-                                <TextField
-                                    id="comission"
-                                    name="comission"
-                                    label="Comissão %"
-                                    value={formik.values.comission}
-                                    onChange={formik.handleChange}
-                                    fullWidth
-                                    required
-                                />
-                            </FormControl>
-                            ) : (
+                                    <TextField
+                                        id="comission"
+                                        name="comission"
+                                        label="Comissão %"
+                                        value={formik.values.comission}
+                                        onChange={formik.handleChange}
+                                        fullWidth
+                                        required
+                                    />
+                                </FormControl>
+                            )}
+                            {formik.values.mode_payment === 'MENSAL' && (
                                 <FormControl sx={{ m: 1, minWidth: 150 }}>
-                                <TextField
-                                    id="value"
-                                    name="value"
-                                    label="Valor (R$)"
-                                    value={formik.values.value}
-                                    onChange={formik.handleChange}
-                                    fullWidth
-                                    required
-                                />
-                            </FormControl>
+                                    <TextField
+                                        id="value"
+                                        name="value"
+                                        label="Valor (R$)"
+                                        value={formik.values.value}
+                                        onChange={formik.handleChange}
+                                        fullWidth
+                                        required
+                                    />
+                                </FormControl>
                             )}
                         </Grid>
                     </Grid>
@@ -260,6 +263,16 @@ export const ProfessionalPayment = () => {
                                         })
                                     }
                                 </Select>
+                            </FormControl>
+                            <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                <TextField
+                                    id="bank_branch"
+                                    name="bank_branch"
+                                    label="Agência"
+                                    value={formik.values.bank_branch}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                />
                             </FormControl>
                             <FormControl sx={{ m: 1, minWidth: 200 }}>
                                 <TextField

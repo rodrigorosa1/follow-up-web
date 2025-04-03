@@ -21,8 +21,8 @@ export const getEventslId = (id: string) => {
         });
 }
 
-export const updateEvents = (id: any, data: any) => {
-    return axios.patch(API_URL + id,
+export const updateEvents = (event_id: any, data: any) => {
+    return axios.patch(API_URL + 'update/' + event_id,
         data, { headers: authHeader() }).then((resp) => {
             return resp.data;
         }).catch((error) => {

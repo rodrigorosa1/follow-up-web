@@ -37,7 +37,7 @@ export const ModalStudentHealthPlan: React.FC<ModalHealthPlanProps> = ({ healthP
         email: '',
         zip_code: '',
         address: '',
-        number_address: '',
+        number: '',
         complement: '',
         district: '',
         city: '',
@@ -220,11 +220,11 @@ export const ModalStudentHealthPlan: React.FC<ModalHealthPlanProps> = ({ healthP
                             <Grid item xl={1} lg={1} md={1} sm={6} xs={6} sx={{ m: 1 }}>
                                 <Stack sx={{ width: '100%' }} spacing={2}>
                                     <TextField
-                                        id="number_address"
-                                        name="number_address"
+                                        id="number"
+                                        name="number"
                                         label="Número"
                                         size="small"
-                                        value={formik.values.number_address}
+                                        value={formik.values.number}
                                         onChange={formik.handleChange}
                                         fullWidth
                                         autoFocus

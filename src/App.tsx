@@ -32,6 +32,7 @@ import { PaymentListProfessional } from './features/finance/payments/PaymentList
 import { Billings } from './features/finance/billings/Billings';
 import { BillingsCustomer } from './features/finance/billings/BillingsCustomer';
 import { Company } from './features/comercial/Company';
+import { CompanyDetails } from './features/configurations/company/CompanyDetails';
 
 
 const App: React.FC = () => {
@@ -82,6 +83,7 @@ const App: React.FC = () => {
 
               <Route path='/configurations' element={<Configurations />} />
               <Route path='/configurations/users' element={<User />} />
+              <Route path='/configurations/company' element={<CompanyDetails />} />
 
               <Route path='/profile' element={<Profile />} />
               <Route path='/finance' element={<Finances />} />

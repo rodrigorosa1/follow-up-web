@@ -6,6 +6,7 @@ import { getStudentHealthPlan, getStudentsResponsible } from "../../../services/
 import { IResponsable } from "../../../types/student.type";
 import { IHealthPlan } from "../../../types/healthPlan.type";
 import { IBilling } from "../../../types/billing.type";
+import { senderInvoice } from "../../../services/invoice.service";
 
 
 const style = {
@@ -14,7 +15,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 550,
-    height: 400,
+    height: 300,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -87,7 +88,7 @@ export const BillingInvoiceGenerate: React.FC<ModalInvoiceGenerate> = ({ ids, bi
         onSubmit: (values) => {
             const payload = setPayload(values);
             console.log(payload);
-            // senderInvoice(values);
+            senderInvoice(payload);
             onSnackbarOpen();
             onClose();
             startResume();
