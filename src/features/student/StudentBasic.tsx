@@ -1,4 +1,4 @@
-import { Box, FormControl, Grid, IconButton, InputLabel, TextField, Snackbar, Alert, LinearProgress } from "@mui/material";
+import { Box, FormControl, Grid, IconButton, InputLabel, TextField, Snackbar, Alert } from "@mui/material";
 import { useFormik } from "formik";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
@@ -13,9 +13,9 @@ import dayjs from 'dayjs';
 import { DocumentMask } from "../../components/masks/InputMask";
 import { Avatar } from "@files-ui/react";
 import { getStudentAvatarId } from "../../services/avatar.service";
+import { PageLoad } from "../../components/animations/PageLoad";
 
 export const StudentBasic = () => {
-
     const initial = {
         fullname: '',
         allergy: '',
@@ -163,10 +163,8 @@ export const StudentBasic = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            {dataLoaded === false ? (
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
+            {!dataLoaded ? (
+                <PageLoad />
             ) : (
                 <form onSubmit={formik.handleSubmit}>
                     <Grid item>

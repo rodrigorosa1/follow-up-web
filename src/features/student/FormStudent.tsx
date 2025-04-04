@@ -41,7 +41,6 @@ export const FormStudent = () => {
                 <Card
                     sx={{
                         display: 'flex',
-                        maxWidth: 2500,
                     }}
                 >
                     <Box sx={{ width: '100%', typography: 'body1' }}>

@@ -1,3 +1,4 @@
+import * as React from "react"
 import { Grid, Fab, Box, Switch, IconButton, } from "@mui/material";
 import { useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
@@ -7,10 +8,12 @@ import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { getSkills } from "../../services/skill.service";
 import { CustomDataGrid } from "../../components/data-grid/custom";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
+import { PageLoad } from "../../components/animations/PageLoad";
 
 export const Skills = () => {
     let navigate: NavigateFunction = useNavigate();
     const [skills, setSkills] = useState<any[]>([]);
+    const [dataLoaded, setDataLoaded] = React.useState(false);
 
     const goRegister = () => {
         navigate("/skills/register");
@@ -20,13 +23,10 @@ export const Skills = () => {
         navigate('/skills/' + id);
     };
 
-    const activeUpdate = (id: string) => {
-        navigate('/skills/' + id);
-    }
-
     const listSkills = async () => {
         const skills = await getSkills();
         setSkills(skills);
+        setDataLoaded(true);
     }
 
     const columns: GridColDef[] = [
@@ -62,7 +62,6 @@ export const Skills = () => {
                         color="primary"
                         size="small"
                     />
-                    {/* {params.value} */}
                 </div>
             ),
             headerClassName: 'header-datagrid-prof',
@@ -82,37 +81,53 @@ export const Skills = () => {
             spacing={5}
             columnSpacing={{ xs: 5, sm: 7, md: 9 }}
         >
-            <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
-                <Grid container alignItems="left" justifyContent="left">
-                    <CustomBreadcrumbs
-                        title1="cadastro"
-                        href1="#"
-                        title2="habilidades"
-                        href2="/skills"
-                    />
-                </Grid>
-            </Grid>
-            <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
-                <Grid container alignItems="right" justifyContent="right">
-                    <Fab variant="extended" size="small" color="primary" aria-label="add" onClick={goRegister}>
-                        <AddIcon sx={{ mr: 1 }} />
-                        Novo
-                    </Fab>
-                </Grid>
-            </Grid>
-            <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-                <Box
-                    sx={{
-                        height: 700,
-                        width: '100%',
-                    }}
-                >
-                    <CustomDataGrid
-                        columns={columns}
-                        rows={skills}
-                    />
-                </Box>
-            </Grid>
+            {
+                !dataLoaded ? (
+                    <PageLoad />
+                ) : (
+                    <Grid item>
+                        <Grid container>
+                            <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
+                                <Grid container alignItems="left" justifyContent="left">
+                                    <CustomBreadcrumbs
+                                        title1="cadastro"
+                                        href1="#"
+                                        title2="habilidades"
+                                        href2="/skills"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid container alignItems="right" justifyContent="right">
+                            <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
+                                <Grid container alignItems="right" justifyContent="right">
+                                    <Fab variant="extended" size="small" color="primary" aria-label="add" onClick={goRegister}>
+                                        <AddIcon sx={{ mr: 1 }} />
+                                        Novo
+                                    </Fab>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid container alignItems="center" justifyContent="center"
+                        sx={{
+                            marginTop: 5
+                        }}>
+                            <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                                <Box
+                                    sx={{
+                                        height: 650,
+                                        width: '100%',
+                                    }}
+                                >
+                                    <CustomDataGrid
+                                        columns={columns}
+                                        rows={skills}
+                                    />
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                )}
         </Grid>
     );
 }
