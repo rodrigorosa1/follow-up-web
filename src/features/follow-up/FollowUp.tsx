@@ -49,6 +49,11 @@ export const FollowUp = () => {
         getOptionLabel: (option: any) => option.fullname,
     };
 
+    const truncateText = (text: string, maxLength: number): string => {
+        if (text.length <= maxLength) return text;
+        return text.slice(0, maxLength).trim() + '...';
+      };
+
     React.useEffect(() => {
         listEvents();
         listStudents();
@@ -262,7 +267,7 @@ export const FollowUp = () => {
                                             {row.skills.map((skill: any) => (
                                                 <Chip
                                                     key={skill.id}
-                                                    label={skill.skill_name as string} />
+                                                    label={truncateText(skill.skill_name, 25)} />
                                             ))}
                                         </div>
                                     </TableCell>

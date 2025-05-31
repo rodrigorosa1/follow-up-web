@@ -11,7 +11,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 550,
+    width: 650,
     height: 350,
     bgcolor: 'background.paper',
     border: '2px solid #000',
@@ -31,6 +31,7 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
     const initial = {
         name: specialty?.name ?? '',
         description: specialty?.description ?? '',
+        code_nfes: specialty?.code_nfes ?? '',
         value_hour: formatCurrency(specialty?.value_hour),
     };
 
@@ -62,7 +63,7 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
                     </Typography>
                     <Grid item>
                         <Grid container>
-                            <FormControl sx={{ m: 1, minWidth: 450 }}>
+                            <FormControl sx={{ m: 1, minWidth: 550 }}>
                                 <TextField
                                     id="name"
                                     name="name"
@@ -78,9 +79,10 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
                     </Grid>
                     <Grid item xl={12} lg={12} md={12} sm={12} xs={12} sx={{ mr: 2 }}>
                         <Grid container>
-                            <FormControl sx={{ m: 1, minWidth: 450 }}>
+                            <FormControl sx={{ m: 1, minWidth: 550 }}>
                                 <TextField
                                     id="description"
+                                    rows={3}
                                     name="description"
                                     label="Descrição"
                                     size="small"
@@ -93,7 +95,22 @@ export const ModalSpecialty: React.FC<ModalSpecialtyProps> = ({ specialty, isOpe
                     </Grid>
                     <Grid item xl={12} lg={12} md={12} sm={12} xs={12} sx={{ mr: 2 }}>
                         <Grid container>
-                            <FormControl sx={{ m: 1, minWidth: 450 }}>
+                            <FormControl sx={{ m: 1, minWidth: 550 }}>
+                                <TextField
+                                    id="code_nfes"
+                                    name="code_nfes"
+                                    label="Cód. Trib.Serviço"
+                                    size="small"
+                                    value={formik.values.code_nfes}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                />
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid item xl={12} lg={12} md={12} sm={12} xs={12} sx={{ mr: 2 }}>
+                        <Grid container>
+                            <FormControl sx={{ m: 1, minWidth: 550 }}>
                                 <TextField
                                     id="value_hour"
                                     name="value_hour"

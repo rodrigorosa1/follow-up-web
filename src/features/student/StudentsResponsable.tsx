@@ -75,13 +75,13 @@ export default function StudentResponsable() {
         {
             field: 'bond',
             headerName: 'Vínculo',
-            width: 500,
+            width: 430,
             headerClassName: 'header-datagrid-prof',
         },
         {
             field: 'status',
             headerName: 'Situação',
-            width: 150,
+            width: 180,
             renderCell: (params: any) => (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <IconButton>
@@ -148,7 +148,7 @@ export default function StudentResponsable() {
                     </Grid>
 
 
-                    <Grid container alignItems="center" justifyContent="center">
+                    <Grid container>
                         <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
                             <Box
                                 sx={{

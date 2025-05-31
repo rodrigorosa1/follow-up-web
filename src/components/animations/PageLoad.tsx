@@ -8,7 +8,7 @@ export const PageLoad = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '40vh',
+                height: '30vh',
             }}
         >
             <CircularProgress />

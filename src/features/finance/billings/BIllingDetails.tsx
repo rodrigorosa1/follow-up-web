@@ -119,6 +119,7 @@ export const BillingDetails: React.FC<BillingDetailsProps> = ({ billing, isOpen,
                                 >
                                     <MenuItem value={'PREVISTO'} selected>Previsto</MenuItem>
                                     <MenuItem value={'CONFIRMADO'}>Confirmado</MenuItem>
+                                    <MenuItem value={'GERADO NFSe'}>GERADO NFSe</MenuItem>
                                     <MenuItem value={'FEITO'}>Feito</MenuItem>
                                 </Select>
                             </FormControl>

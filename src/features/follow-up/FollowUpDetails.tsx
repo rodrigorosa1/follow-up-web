@@ -67,81 +67,80 @@ export const FollowUpDetais = () => {
                     </Grid>
                     <Grid item xs={12} md={12} lg={12}>
                         <Paper elevation={2}>
-                            <React.Fragment>
-                                <Grid container>
-                                    {student && (
-                                        <Grid item xs={12} md={4} lg={4}>
-                                            <div className='resultDetailsSkill'>
-                                                <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
-                                                    Cliente
+                            <Grid container>
+                                {student && (
+                                    <Grid item xs={12} md={4} lg={4}>
+                                        <div className='resultDetailsSkill'>
+                                            <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
+                                                Cliente
+                                            </Typography>
+                                            <Grid container justifyContent="left" alignItems={"center"}>
+                                                <Avatar
+                                                    alt={student.fullname}
+                                                    src={loadStudentAvatar(student.id)}
+                                                />
+                                                <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
+                                                    {student.fullname}
                                                 </Typography>
-                                                <Grid container justifyContent="left" alignItems={"center"}>
-                                                    <Avatar
-                                                        alt={student.fullname}
-                                                        src={loadStudentAvatar(student.id)}
-                                                    />
-                                                    <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
-                                                        {student.fullname}
-                                                    </Typography>
-                                                </Grid>
-                                            </div>
-                                        </Grid>
-                                    )}
-                                    {professional && (
-                                        <Grid item xs={12} md={4} lg={4}>
-                                            <div className='resultDetailsSkill'>
-                                                <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
-                                                    Profissional
+                                            </Grid>
+                                        </div>
+                                    </Grid>
+                                )}
+                                {professional && (
+                                    <Grid item xs={12} md={4} lg={4}>
+                                        <div className='resultDetailsSkill'>
+                                            <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
+                                                Profissional
+                                            </Typography>
+                                            <Grid container justifyContent="left" alignItems={"center"}>
+                                                <Avatar
+                                                    alt={professional.fullname}
+                                                    src={loadProfAvatar(professional.id)}
+                                                />
+                                                <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
+                                                    {professional.fullname}
                                                 </Typography>
-                                                <Grid container justifyContent="left" alignItems={"center"}>
-                                                    <Avatar
-                                                        alt={professional.fullname}
-                                                        src={loadProfAvatar(professional.id)}
-                                                    />
-                                                    <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
-                                                        {professional.fullname}
-                                                    </Typography>
-                                                </Grid>
-                                            </div>
-                                        </Grid>
-                                    )}
-                                    {event && (
-                                        <><Grid item xs={6} md={2} lg={2}>
+                                            </Grid>
+                                        </div>
+                                    </Grid>
+                                )}
+                                {event && (
+                                    <><Grid item xs={6} md={2} lg={2}>
+                                        <div className='resultDetailsSkill'>
+                                            <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
+                                                Status
+                                            </Typography>
+                                            <Grid container justifyContent="left" alignItems={"left"}>
+                                                <Chip
+                                                    label={event.status}
+                                                    color={event.status === 'AGENDADO' ? 'default' :
+                                                        event.status === 'EM ANDAMENTO' ? 'primary' :
+                                                            event.status === 'PAUSADO' ? 'warning' :
+                                                                event.status === 'CONCLUÍDO' ? 'success' :
+                                                                    'error'} />
+                                            </Grid>
+                                        </div>
+                                    </Grid><Grid item xs={6} md={2} lg={2}>
                                             <div className='resultDetailsSkill'>
                                                 <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
-                                                    Status
+                                                    Data
                                                 </Typography>
                                                 <Grid container justifyContent="left" alignItems={"left"}>
                                                     <Chip
-                                                        label={event.status}
-                                                        color={event.status === 'AGENDADO' ? 'default' :
-                                                            event.status === 'EM ANDAMENTO' ? 'primary' :
-                                                                event.status === 'PAUSADO' ? 'warning' :
-                                                                    event.status === 'CONCLUÍDO' ? 'success' :
-                                                                        'error'} />
+                                                        label={new Date(event.start).toLocaleDateString('pt-BR')}
+                                                        color='default'
+                                                    />
+                                                    <Chip
+                                                        label={event.start_hour}
+                                                        color='default'
+                                                    />
                                                 </Grid>
                                             </div>
-                                        </Grid><Grid item xs={6} md={2} lg={2}>
-                                                <div className='resultDetailsSkill'>
-                                                    <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
-                                                        Data
-                                                    </Typography>
-                                                    <Grid container justifyContent="left" alignItems={"left"}>
-                                                        <Chip
-                                                            label={new Date(event.start).toLocaleDateString('pt-BR')}
-                                                            color='default'
-                                                        />
-                                                        <Chip
-                                                            label={event.start_hour}
-                                                            color='default'
-                                                        />
-                                                    </Grid>
-                                                </div>
-                                            </Grid></>
+                                        </Grid></>
 
-                                    )}
-                                </Grid>
-                            </React.Fragment>
+                                )}
+                            </Grid>
+
                         </Paper>
                     </Grid>
                     {
@@ -149,9 +148,8 @@ export const FollowUpDetais = () => {
                             skills.map((skill: any) => (
                                 <><Grid item xs={12} md={12} lg={12}>
                                     <Paper elevation={2} sx={{ marginTop: 5 }}>
-                                        <React.Fragment>
-                                            <Grid container>
-                                                <Grid item xs={9} md={2} lg={2}>
+                                    <Grid container>
+                                                <Grid item xs={12} md={12} lg={12}>
                                                     <div className='resultDetailsSkill'>
                                                         <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
                                                             Habilidade
@@ -164,7 +162,6 @@ export const FollowUpDetais = () => {
                                                     </div>
                                                 </Grid>
                                             </Grid>
-                                        </React.Fragment>
                                     </Paper>
                                 </Grid>
                                     <Grid item xs={12} md={12} lg={12}>

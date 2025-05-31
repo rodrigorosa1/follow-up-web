@@ -7,6 +7,8 @@ import { getSpecialties } from "../../services/specialty.service";
 import { ModalSpecialty } from "./ModalSpecialty";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
 import { formatCurrency } from "../../helpers/currency";
+import { GridColDef } from "@mui/x-data-grid";
+import { CustomDataGrid } from "../../components/data-grid/custom";
 
 
 
@@ -46,6 +48,44 @@ export const Specialty = () => {
     const handleSnackbarOpen = () => {
         setSnackbarOpen(true);
     };
+
+    const columns: GridColDef[] = [
+        {
+            field: 'name',
+            headerName: 'Especialidade',
+            width: 500,
+            headerClassName: 'header-datagrid-prof',
+        },
+        {
+            field: 'value_hour',
+            headerName: 'Valor Hora',
+            width: 500,
+            headerClassName: 'header-datagrid-prof',
+            renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'right' }}>
+                    {formatCurrency(params.row.value_hour)}
+                </div>
+            ),
+        },
+        {
+            field: 'status',
+            headerName: 'Situação',
+            width: 150,
+            renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton>
+                        <HiPencilSquare
+                            size={20}
+                            color='grey'
+                            onClick={() => handleClick(params.row)}
+                        />
+                    </IconButton>
+                </div>
+            ),
+            headerClassName: 'header-datagrid-prof',
+        },
+    ];
+
 
     React.useEffect(() => {
         listSpecialties();
@@ -88,45 +128,19 @@ export const Specialty = () => {
                     />
                 </Grid>
             </Box>
-            <Grid item xl={10} lg={10} md={10} sm={10} xs={10}>
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 400 }} aria-label="responsáveis" size='small'>
-                        <TableHead
-                            sx={{
-                                backgroundColor: '#edf5f3',
-                            }}>
-                            <TableRow>
-                                <TableCell>Nome</TableCell>
-                                <TableCell style={{ width: 160 }}>Valor Hora</TableCell>
-                                <TableCell style={{ width: 100 }} align="center"></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {specialties.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.name}
-                                    </TableCell>
-                                    <TableCell component="th" scope="row">
-                                        {formatCurrency(row.value_hour)}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton>
-                                            <HiPencilSquare
-                                                size={18}
-                                                color='grey'
-                                                onClick={() => handleClick(row)}
-                                            />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+            <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                <Box
+                    sx={{
+                        height: 500,
+                        width: '100%',
+                    }}
+                >
+                    <CustomDataGrid
+                        columns={columns}
+                        rows={specialties}
+                    />
+                </Box>
+
             </Grid>
             <Grid item>
                 <Box>

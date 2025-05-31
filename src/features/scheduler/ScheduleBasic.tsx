@@ -173,10 +173,17 @@ export const ScheduleBasic = () => {
         if (dataForm.event_id) {
             setDataLoaded(false);
             deleteAllEvents(dataForm.event_id).then((r) => {
+                if (r.status_code === 200) {
+                    handleCloseE();
+                    handleSnackbarOpen();
+                    setDataLoaded(true);
+                    navigate("/scheduler/");
+                }
+                handleMessage(r.response.data.detail);
                 handleCloseE();
+                handleSnackbarError();
                 handleSnackbarOpen();
                 setDataLoaded(true);
-                navigate("/scheduler/");
             }).catch((e) => {
                 console.error(e);
             });
@@ -255,6 +262,7 @@ export const ScheduleBasic = () => {
                         return;
                     }
                     handleMessage(r.response.data.detail);
+                    setDataLoaded(false);
                     handleSnackbarError();
                     handleSnackbarOpen();
                 }).catch((e) => {
@@ -272,6 +280,7 @@ export const ScheduleBasic = () => {
                     return;
                 }
                 handleMessage(r.response.data.detail);
+                setDataLoaded(false);
                 handleSnackbarError();
                 handleSnackbarOpen();
             }).catch((e) => {

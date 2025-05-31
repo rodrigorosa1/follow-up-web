@@ -82,30 +82,30 @@ export const StudentBasic = () => {
                         setSnackbarError(false)
                         setSnackbarMessage('Cadastro atualizado com sucesso!');
                         setSnackbarOpen(true);
-                    } else {
-                        setSnackbarError(true)
-                        setSnackbarMessage(r.response.data.detail);
-                        setSnackbarOpen(true);
+                        return;
                     }
+                    setSnackbarError(true)
+                    setSnackbarMessage(r.response.data.detail);
+                    setSnackbarOpen(true);
                 }).catch((e) => {
                     console.error(e);
                 });
-            } else {
-                postStudent(payload).then((r) => {
-                    if (r.id) {
-                        setSnackbarError(false)
-                        setSnackbarMessage('Cadastro realizado com sucesso!');
-                        setSnackbarOpen(true);
-                        navigate("/students/" + r.id);
-                    } else {
-                        setSnackbarError(true)
-                        setSnackbarMessage(r.response.data.detail);
-                        setSnackbarOpen(true);
-                    }
-                }).catch((e) => {
-                    console.error(e);
-                });
+                return;
             }
+            postStudent(payload).then((r) => {
+                if (r.id) {
+                    setSnackbarError(false)
+                    setSnackbarMessage('Cadastro realizado com sucesso!');
+                    setSnackbarOpen(true);
+                    navigate("/students/" + r.id);
+                    return;
+                }
+                setSnackbarError(true)
+                setSnackbarMessage(r.response.data.detail);
+                setSnackbarOpen(true);
+            }).catch((e) => {
+                console.error(e);
+            });
         },
     });
 

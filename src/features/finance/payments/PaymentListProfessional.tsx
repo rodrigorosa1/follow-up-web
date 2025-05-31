@@ -188,18 +188,20 @@ export const PaymentListProfessional = () => {
                                                     </Grid>
                                                 </div>
                                             </Grid>
-                                            <Grid item xs={12} md={4} lg={4}>
-                                                <div className='resultDetailsSkill'>
-                                                    <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
-                                                        Valor
-                                                    </Typography>
-                                                    <Grid container justifyContent="left" alignItems={"center"}>
-                                                        <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
-                                                            {formatCurrency(professional.value)}
+                                            {professional.mode_payment == 'MENSAL' && (
+                                                <Grid item xs={12} md={4} lg={4}>
+                                                    <div className='resultDetailsSkill'>
+                                                        <Typography color="text.secondary" variant="subtitle2" sx={{ flex: 1 }} gutterBottom>
+                                                            Valor
                                                         </Typography>
-                                                    </Grid>
-                                                </div>
-                                            </Grid>
+                                                        <Grid container justifyContent="left" alignItems={"center"}>
+                                                            <Typography component="p" variant="body1" color="text.secondary" gutterBottom sx={{ flex: 1 }}>
+                                                                {formatCurrency(professional.value)}
+                                                            </Typography>
+                                                        </Grid>
+                                                    </div>
+                                                </Grid>
+                                            )}
                                         </Grid>
                                     )}
                                 </Grid>
