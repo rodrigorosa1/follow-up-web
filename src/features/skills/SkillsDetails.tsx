@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Alert, Box, Card, Fab, Grid, IconButton, InputLabel, LinearProgress, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Alert, Box, Card, Fab, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { getProcedures, getSkillslId, postSkills, updateSkills } from "../../services/skill.service";
 import { useFormik } from "formik";
@@ -11,6 +11,9 @@ import { ModalProcedure } from "../procedures/ModalProcedure";
 import { CustomBreadcrumbs } from "../../components/layout/Breadcrumbs";
 import { getSpecialties } from "../../services/specialty.service";
 import ISpecialty from "../../types/specialty.type";
+import { PageLoad } from "../../components/animations/PageLoad";
+import { GridColDef } from "@mui/x-data-grid";
+import { CustomDataGrid } from "../../components/data-grid/custom";
 
 
 export const SkillsDetails = () => {
@@ -28,7 +31,7 @@ export const SkillsDetails = () => {
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
     const [snackbarError, setSnackbarError] = React.useState(false);
-    const [dataLoaded, setDataLoaded] = React.useState(true);
+    const [dataLoaded, setDataLoaded] = React.useState(false);
     const [selectedProcedure, setSelectedProcedure] = React.useState<IProcedure | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -61,13 +64,12 @@ export const SkillsDetails = () => {
             const prcds = await getProcedures(id);
             setProcedures(prcds);
         }
-        setDataLoaded(false);
+        setDataLoaded(true);
     };
 
     const specialtyList = async () => {
         const list = await getSpecialties();
         setSpecialties(list);
-
     }
 
     const historyBack = () => {
@@ -78,36 +80,41 @@ export const SkillsDetails = () => {
         enableReinitialize: true,
         initialValues: dataForm,
         onSubmit: (values) => {
+            setDataLoaded(false)
             if (id) {
                 updateSkills(id, values).then((r) => {
                     if (r.id) {
                         setSnackbarError(false)
                         setSnackbarMessage('Habilidade atualizada com sucesso!');
                         setSnackbarOpen(true);
-                    } else {
-                        setSnackbarError(true)
-                        setSnackbarMessage(r.response.data.detail);
-                        setSnackbarOpen(true);
+                        setDataLoaded(true)
+                        return;
                     }
+                    setSnackbarError(true)
+                    setSnackbarMessage(r.response.data.detail);
+                    setSnackbarOpen(true);
+                    setDataLoaded(true)
                 }).catch((e) => {
                     console.error(e);
                 });
-            } else {
-                postSkills(values).then((r) => {
-                    if (r.id) {
-                        setSnackbarError(false)
-                        setSnackbarMessage('Habilidade cadastrada com sucesso!');
-                        setSnackbarOpen(true);
-                        navigate("/skills/" + r.id);
-                    } else {
-                        setSnackbarError(true)
-                        setSnackbarMessage(r.response.data.detail);
-                        setSnackbarOpen(true);
-                    }
-                }).catch((e) => {
-                    console.error(e);
-                });
+                return;
             }
+            postSkills(values).then((r) => {
+                if (r.id) {
+                    setSnackbarError(false)
+                    setSnackbarMessage('Habilidade cadastrada com sucesso!');
+                    setSnackbarOpen(true);
+                    setDataLoaded(true)
+                    navigate("/skills/" + r.id);
+                    return;
+                }
+                setSnackbarError(true)
+                setSnackbarMessage(r.response.data.detail);
+                setSnackbarOpen(true);
+                setDataLoaded(true)
+            }).catch((e) => {
+                console.error(e);
+            });
         }
     });
 
@@ -124,6 +131,38 @@ export const SkillsDetails = () => {
         return initial;
     }
 
+    const columns: GridColDef[] = [
+        {
+            field: 'name',
+            headerName: 'Objetivo',
+            width: 390,
+            headerClassName: 'header-datagrid-prof',
+        },
+        {
+            field: 'objective',
+            headerName: 'Descrição',
+            width: 500,
+            headerClassName: 'header-datagrid-prof',
+        },
+        {
+            field: 'goal',
+            headerName: 'Situação',
+            width: 150,
+            renderCell: (params) => (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton>
+                        <HiPencilSquare
+                            size={20}
+                            color='grey'
+                            onClick={() => handlePrcdClick(params.row)}
+                        />
+                    </IconButton>
+                </div>
+            ),
+            headerClassName: 'header-datagrid-prof',
+        },
+    ];
+
     React.useEffect(() => {
         getSkill();
     }, []);
@@ -136,7 +175,6 @@ export const SkillsDetails = () => {
     return (
         <Grid
             container
-        // rowSpacing={5}
         >
             <Grid item xl={6} lg={6} md={6} sm={6} xs={6}>
                 <Grid container alignItems="left" justifyContent="left">
@@ -149,11 +187,8 @@ export const SkillsDetails = () => {
                 </Grid>
             </Grid>
 
-            {dataLoaded === true ? (
-                <Box sx={{ width: '100%' }}>
-                    <LinearProgress />
-                </Box>
-
+            {!dataLoaded ? (
+                <PageLoad />
             ) : (
                 <form onSubmit={formik.handleSubmit}>
                     <Card
@@ -260,51 +295,17 @@ export const SkillsDetails = () => {
                             )}
 
                             <Grid item xl={10} lg={10} md={10} sm={12} xs={12} sx={{ m: 2 }}>
-                                <TableContainer component={Paper}>
-                                    <Table sx={{ minWidth: 400 }} aria-label="responsáveis" size='small'>
-                                        <TableHead
-                                            sx={{
-                                                backgroundColor: '#edf5f3',
-                                            }}>
-                                            <TableRow>
-                                                <TableCell>Objetivo</TableCell>
-                                                <TableCell>Descrição</TableCell>
-                                                <TableCell align="center"></TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {procedures.map((row) => (
-                                                <TableRow
-                                                    key={row.name}
-                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                >
-                                                    <TableCell component="th" scope="row">
-                                                        {row.name}
-                                                    </TableCell>
-                                                    <TableCell component="th" scope="row">
-                                                        {row.objective}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        <IconButton>
-                                                            <HiPencilSquare
-                                                                size={18}
-                                                                color='grey'
-                                                                onClick={() => handlePrcdClick(row)}
-                                                            />
-                                                        </IconButton>
-                                                        <IconButton>
-                                                            <HiOutlineArchiveBoxXMark
-                                                                size={18}
-                                                                color='grey'
-                                                            // onClick={() => goDetails(params.row.id)}
-                                                            />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <Box
+                                    sx={{
+                                        height: 650,
+                                        width: '100%',
+                                    }}
+                                >
+                                    <CustomDataGrid
+                                        columns={columns}
+                                        rows={procedures}
+                                    />
+                                </Box>
                             </Grid>
                         </Box>
                         <Box>

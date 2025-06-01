@@ -1,9 +1,8 @@
 import * as React from "react"
-import { useFormik } from "formik";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
 import { getStudentHealthPlan } from "../../services/student.service";
 import { IHealthPlan } from "../../types/healthPlan.type";
-import { Alert, Box, Button, Grid, IconButton, LinearProgress, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Alert, Box, Button, Grid, IconButton, Snackbar, Stack } from "@mui/material";
 import { ReplyOutlined } from "@mui/icons-material";
 import { ModalStudentHealthPlan } from "./ModalStudentHealthPlan";
 import AddIcon from '@mui/icons-material/Add';
@@ -11,6 +10,9 @@ import { HiOutlineArchiveBoxXMark, HiPencilSquare } from "react-icons/hi2";
 import { ModalSelectPlan } from "./ModalSelectPlan";
 import SendIcon from '@mui/icons-material/Send';
 import { DeleteHealthPlanDialog } from "../../components/dialogs/custom-dialogs";
+import { PageLoad } from "../../components/animations/PageLoad";
+import { GridColDef } from "@mui/x-data-grid";
+import { CustomDataGrid } from "../../components/data-grid/custom";
 
 export const StudentHealthPlan = () => {
     const initial = {
@@ -30,7 +32,6 @@ export const StudentHealthPlan = () => {
 
     let navigate: NavigateFunction = useNavigate();
     const { id } = useParams();
-    const [dataForm, setDataForm] = React.useState(initial);
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState('');
     const [snackbarError, setSnackbarError] = React.useState(false);
@@ -47,10 +48,9 @@ export const StudentHealthPlan = () => {
 
     const studentPlan = async () => {
         if (id) {
-            const plan = await getStudentHealthPlan(id);
-            if (plan) {
-                setHealthPlanStudent(plan)
-            }
+            const response = await getStudentHealthPlan(id);
+            const onlyPlans = response.map((item: { plan: any; }) => item.plan);
+            setHealthPlanStudent(onlyPlans)
         }
         setDataLoaded(true)
     }
@@ -85,12 +85,44 @@ export const StudentHealthPlan = () => {
         setSnackbarOpen(true);
     };
 
-    const formik = useFormik({
-        enableReinitialize: true,
-        initialValues: dataForm,
-        onSubmit: (values) => {
+    const columns: GridColDef[] = [
+        {
+            field: 'fantasy_name',
+            headerName: 'Plano',
+            width: 500,
+            headerClassName: 'header-datagrid-prof',
         },
-    });
+        {
+            field: 'city',
+            headerName: 'Cidade',
+            width: 430,
+            headerClassName: 'header-datagrid-prof',
+        },
+        {
+            field: 'id',
+            headerName: 'Situação',
+            width: 180,
+            renderCell: (params: any) => (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <IconButton>
+                        <HiPencilSquare
+                            size={20}
+                            color='grey'
+                            onClick={() => handlePlanClick(params.row)}
+                        />
+                    </IconButton>
+                    <IconButton>
+                        <HiOutlineArchiveBoxXMark
+                            size={20}
+                            color='grey'
+                            onClick={() => handleClickOpen(params.row)}
+                        />
+                    </IconButton>
+                </div>
+            ),
+            headerClassName: 'header-datagrid-prof',
+        },
+    ];
 
     const handleClickOpen = (plan: IHealthPlan) => {
         setHealthPlanSelected(plan);
@@ -107,12 +139,12 @@ export const StudentHealthPlan = () => {
     }, []);
 
     return (
-        dataLoaded === false ? (
-            <Box sx={{ width: '100%' }}>
-                <LinearProgress />
-            </Box>
+        !dataLoaded ? (
+            <Grid item>
+                <PageLoad />
+            </Grid>
         ) : (
-            <form onSubmit={formik.handleSubmit}>
+            <Grid item>
                 <Grid container>
                     {id && (
                         <Grid item>
@@ -167,49 +199,18 @@ export const StudentHealthPlan = () => {
                     </Grid>
                     {healthPlanStudent ? (
                         <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 400 }} aria-label="responsáveis" size='small'>
-                                    <TableHead
-                                        sx={{
-                                            backgroundColor: '#edf5f3',
-                                        }}>
-                                        <TableRow>
-                                            <TableCell>Plano</TableCell>
-                                            <TableCell>Cidade</TableCell>
-                                            <TableCell align="center"></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {healthPlanStudent.map((row) => (
-                                            <TableRow
-                                                key={row.id}
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                            >
-                                                <TableCell component="th" scope="row">
-                                                    {row.plan.fantasy_name}
-                                                </TableCell>
-                                                <TableCell >{row.plan.city}</TableCell>
-                                                <TableCell align="center">
-                                                    <IconButton>
-                                                        <HiPencilSquare
-                                                            size={18}
-                                                            color='grey'
-                                                            onClick={() => handlePlanClick(row.plan)}
-                                                        />
-                                                    </IconButton>
-                                                    <IconButton>
-                                                        <HiOutlineArchiveBoxXMark
-                                                            size={18}
-                                                            color='grey'
-                                                            onClick={() => handleClickOpen(row.plan)}
-                                                        />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
+                            <Box
+                                sx={{
+                                    height: 500,
+                                    width: '100%',
+                                }}
+                            >
+                                <CustomDataGrid
+                                    columns={columns}
+                                    rows={healthPlanStudent}
+                                />
+                            </Box>
+
                         </Grid>
 
                     ) : (
@@ -251,12 +252,8 @@ export const StudentHealthPlan = () => {
                         )}
                     </Snackbar>
                 </Grid>
-            </form>
-
-
+            </Grid>
         )
-
-
     );
 
 

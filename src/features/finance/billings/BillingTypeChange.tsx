@@ -25,10 +25,12 @@ interface ModalBillingTypeProps {
     isOpen: boolean;
     onClose: () => void;
     onSnackbarOpen: () => void;
+    onSnackbarError: (active: boolean) => void;
+    onSnackbarMessage: (message: string) => void;
     startResume: () => void;
 }
 
-export const BillingTypeChange: React.FC<ModalBillingTypeProps> = ({ contractor_id, type, isOpen, onClose, onSnackbarOpen, startResume }) => {
+export const BillingTypeChange: React.FC<ModalBillingTypeProps> = ({ contractor_id, type, isOpen, onClose, onSnackbarOpen, onSnackbarError, onSnackbarMessage, startResume }) => {
     const initial = {
         category: type,
     };
@@ -37,7 +39,21 @@ export const BillingTypeChange: React.FC<ModalBillingTypeProps> = ({ contractor_
         enableReinitialize: true,
         initialValues: initial,
         onSubmit: (values) => {
-            changeBillingType(contractor_id, values);
+            changeBillingType(contractor_id, values).then((r) => {
+                if (r.id) {
+                    onSnackbarError(false);
+                    onSnackbarOpen();
+                    onClose();
+                    startResume();
+                    return;
+                }
+                onSnackbarMessage(r.response.data.detail);
+                onSnackbarError(true);
+                onSnackbarOpen();
+                onClose();
+            }).catch((e) => {
+                console.error(e);
+            });
             onSnackbarOpen();
             onClose();
             startResume();

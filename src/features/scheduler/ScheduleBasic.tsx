@@ -1,7 +1,7 @@
 import * as React from "react"
 import { IEvent, Iselection } from "../../types/scheduler.type";
 import { NavigateFunction, useNavigate, useParams } from 'react-router-dom';
-import { deleteAllEvents, deleteEvent, getEventslId, postEvents, updateEvents } from "../../services/event.service";
+import { deleteAllEvents, getEventslId, postEvents, updateEvents } from "../../services/event.service";
 import { Button, Chip, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, TextField, Alert, Box, Snackbar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Stack } from "@mui/material";
 import { useFormik } from "formik";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -167,27 +167,23 @@ export const ScheduleBasic = () => {
         formik.setFieldValue('slots', event.slots);
         setDataForm(event);
         setDataLoaded(true);
-
-
     }
-
-    const handleDeleteEvent = () => {
-        if (id) {
-            deleteEvent(id);
-            handleClose();
-            handleSnackbarOpen();
-            navigate("/scheduler/");
-        }
-    };
 
     const handleDeleteAllEvents = () => {
         if (dataForm.event_id) {
             setDataLoaded(false);
             deleteAllEvents(dataForm.event_id).then((r) => {
+                if (r.status_code === 200) {
+                    handleCloseE();
+                    handleSnackbarOpen();
+                    setDataLoaded(true);
+                    navigate("/scheduler/");
+                }
+                handleMessage(r.response.data.detail);
                 handleCloseE();
+                handleSnackbarError();
                 handleSnackbarOpen();
                 setDataLoaded(true);
-                navigate("/scheduler/");
             }).catch((e) => {
                 console.error(e);
             });
@@ -266,6 +262,7 @@ export const ScheduleBasic = () => {
                         return;
                     }
                     handleMessage(r.response.data.detail);
+                    setDataLoaded(false);
                     handleSnackbarError();
                     handleSnackbarOpen();
                 }).catch((e) => {
@@ -283,6 +280,7 @@ export const ScheduleBasic = () => {
                     return;
                 }
                 handleMessage(r.response.data.detail);
+                setDataLoaded(false);
                 handleSnackbarError();
                 handleSnackbarOpen();
             }).catch((e) => {
@@ -416,7 +414,7 @@ export const ScheduleBasic = () => {
     };
 
     return (
-        dataLoaded === false ? (
+        !dataLoaded ? (
             <PageLoad />
         ) : (
             <Box sx={{ width: '100%', typography: 'body1' }}>

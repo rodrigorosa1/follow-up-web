@@ -27,6 +27,7 @@ export const ProfessionalBasic = () => {
         document_company: '',
         social_name: '',
         fantasy_name: '',
+        crp: '',
         phone: '',
         avatar: '',
     }
@@ -71,6 +72,7 @@ export const ProfessionalBasic = () => {
             document_company: form.document_company,
             social_name: form.social_name,
             fantasy_name: form.fantasy_name,
+            crp: form.crp,
             phone: form.phone,
             avatar: form.avatar,
         }
@@ -163,6 +165,7 @@ export const ProfessionalBasic = () => {
             document_company: values.document_company,
             social_name: values.social_name,
             fantasy_name: values.fantasy_name,
+            crp: values.crp,
             phone: values.phone,
             avatar: values.avatar,
         }
@@ -331,13 +334,13 @@ export const ProfessionalBasic = () => {
                                                 autoFocus
                                             />
                                         </Grid>
-                                        <Grid item xl={2} lg={2} md={2} sm={12} xs={12} sx={{ m: 1 }}>
+                                        <Grid item xl={1} lg={1} md={1} sm={12} xs={12} sx={{ m: 1 }}>
                                             <TextField
-                                                id="nationality"
-                                                name="nationality"
-                                                label="Nacionalidade"
+                                                id="crp"
+                                                name="crp"
+                                                label="CRP"
                                                 size="small"
-                                                value={formik.values.nationality}
+                                                value={formik.values.crp}
                                                 onChange={formik.handleChange}
                                                 autoFocus
                                             />

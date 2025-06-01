@@ -18,10 +18,7 @@ export const ProfessionalPayment = () => {
         value: '',
         comission: null,
         key: '',
-        bank_number: null,
-        bank_branch: '',
-        account_number: '',
-        account_digit: null
+
     }
 
     let navigate: NavigateFunction = useNavigate();
@@ -80,14 +77,9 @@ export const ProfessionalPayment = () => {
             specialty_id: values.specialty_id,
             type_payment: values.type_payment,
             mode_payment: values.mode_payment,
-            value: values.value,
             comission: values.comission,
+            value: values.value,
             key: values.key,
-            bank_number: values.bank_number,
-            bank_branch: values.bank_branch,
-            account_number: values.account_number,
-            bank: values.bank,
-            account_digit: values.account_digit,
         }
         return initial;
     }
@@ -195,8 +187,8 @@ export const ProfessionalPayment = () => {
                                     fullWidth
                                     required
                                 >
-                                    <MenuItem value={'PIX'}>Pix</MenuItem>
-                                    <MenuItem value={'TED'}>Transferência Bancaria</MenuItem>
+                                    <MenuItem selected value={'PIX'}>Pix</MenuItem>
+                                    {/* <MenuItem value={'TED'}>Transferência Bancaria</MenuItem> */}
                                 </Select>
                             </FormControl>
                             <FormControl sx={{ m: 1, minWidth: 150 }}>
@@ -210,9 +202,9 @@ export const ProfessionalPayment = () => {
                                     fullWidth
                                     required
                                 >
-                                    <MenuItem value={'MENSAL'}>Mês</MenuItem>
-                                    <MenuItem value={'HORA'}>Agenda</MenuItem>
-                                    <MenuItem value={'COMISSÃO'}>Comissão</MenuItem>
+                                    {/* <MenuItem value={'MENSAL'}>Mês</MenuItem> */}
+                                    <MenuItem selected value={'AGENDA'}>Agenda</MenuItem>
+                                    {/* <MenuItem value={'COMISSÃO'}>Comissão</MenuItem> */}
                                 </Select>
                             </FormControl>
                             {formik.values.mode_payment === 'COMISSÃO' && (
@@ -228,22 +220,20 @@ export const ProfessionalPayment = () => {
                                     />
                                 </FormControl>
                             )}
-                            {formik.values.mode_payment === 'MENSAL' && (
-                                <FormControl sx={{ m: 1, minWidth: 150 }}>
-                                    <TextField
-                                        id="value"
-                                        name="value"
-                                        label="Valor (R$)"
-                                        value={formik.values.value}
-                                        onChange={formik.handleChange}
-                                        fullWidth
-                                        required
-                                    />
-                                </FormControl>
-                            )}
+                            <FormControl sx={{ m: 1, minWidth: 150 }}>
+                                <TextField
+                                    id="value"
+                                    name="value"
+                                    label="Valor (R$)"
+                                    value={formik.values.value}
+                                    onChange={formik.handleChange}
+                                    fullWidth
+                                    required
+                                />
+                            </FormControl>
                         </Grid>
                     </Grid>
-                    <Grid item>
+                    {/* <Grid item>
                         <Grid container>
                             <FormControl sx={{ m: 1, minWidth: 200 }}>
                                 <InputLabel>Banco</InputLabel>
@@ -285,7 +275,7 @@ export const ProfessionalPayment = () => {
                                 />
                             </FormControl>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                     <Grid item>
                         <Grid container>
                             <FormControl sx={{ m: 1, minWidth: 600 }}>

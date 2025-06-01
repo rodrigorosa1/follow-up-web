@@ -4,7 +4,7 @@ import {
     GridToolbarFilterButton,
     DataGrid,
     GridRowSpacingParams,
-    gridClasses,    
+    gridClasses,
     GridLocaleText
 } from "@mui/x-data-grid";
 import { useCallback } from "react";
@@ -197,8 +197,11 @@ export const CustomDataGrid: React.FC<DataGridProps> = ({ columns, rows, paginat
             density={'compact'}
             getRowSpacing={getRowSpacing}
             sx={{
+                minWidth: '100%',
+                overflowX: 'hidden',
                 [`& .${gridClasses.row}`]: {
-                    bgcolor: (theme) => theme.palette.mode === 'light' ? grey[50] : grey[200],
+                    bgcolor: (theme) =>
+                        theme.palette.mode === 'light' ? grey[50] : grey[200],
                 },
             }}
             slots={{
