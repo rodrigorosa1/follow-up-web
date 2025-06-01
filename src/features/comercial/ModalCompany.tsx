@@ -457,38 +457,6 @@ export const ModalCompany: React.FC<ModalCompanyProps> = ({ company, isOpen, com
                             <Grid item xl={3} lg={3} md={3} sm={12} xs={12}>
                                 <Stack sx={{ width: '100%' }} spacing={2}>
                                     <FormControl sx={{ m: 1, minWidth: 100 }}>
-                                        <TextField
-                                            id="item_list_service"
-                                            name="item_list_service"
-                                            label="Cod. Lista de Serviço"
-                                            size="small"
-                                            value={formik.values.item_list_service}
-                                            onChange={formik.handleChange}
-                                            fullWidth
-                                            autoFocus
-                                        />
-                                    </FormControl>
-                                </Stack>
-                            </Grid>
-                            <Grid item xl={3} lg={3} md={3} sm={12} xs={12}>
-                                <Stack sx={{ width: '100%' }} spacing={2}>
-                                    <FormControl sx={{ m: 1, minWidth: 100 }}>
-                                        <TextField
-                                            id="municipal_tax_code"
-                                            name="municipal_tax_code"
-                                            label="Cód. Trib. do Municipio"
-                                            size="small"
-                                            value={formik.values.municipal_tax_code}
-                                            onChange={formik.handleChange}
-                                            fullWidth
-                                            autoFocus
-                                        />
-                                    </FormControl>
-                                </Stack>
-                            </Grid>
-                            <Grid item xl={3} lg={3} md={3} sm={12} xs={12}>
-                                <Stack sx={{ width: '100%' }} spacing={2}>
-                                    <FormControl sx={{ m: 1, minWidth: 100 }}>
                                         <InputLabel>ISS Retido</InputLabel>
                                         <Select
                                             label="ISS Retido"
