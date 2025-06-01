@@ -2,7 +2,7 @@ import * as React from "react"
 import ICompany from "../../../types/company.type";
 import { companyForUserLogged, updateCompany } from "../../../services/company.service";
 import { useFormik } from "formik";
-import { Alert, Box, FormControl, Grid, IconButton, Snackbar, Stack, TextField } from "@mui/material";
+import { Alert, Box, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Snackbar, Stack, TextField } from "@mui/material";
 import { CepMask, CompanyMask, PhoneMask } from "../../../components/masks/InputMask";
 import { FindReplace, ReplyOutlined, Save } from "@mui/icons-material";
 import { findiCep } from "../../../services/external.service";
@@ -40,6 +40,7 @@ export const CompanyDetails = () => {
         item_list_service: '',
         municipal_tax_code: '',
         iss_retained: '',
+        api_nfes_token: ''
     }
 
     const companyLogged = async () => {
@@ -351,12 +352,31 @@ export const CompanyDetails = () => {
                         <Grid item xl={3} lg={3} md={3} sm={12} xs={12}>
                             <Stack sx={{ width: '100%' }} spacing={2}>
                                 <FormControl sx={{ m: 1, minWidth: 100 }}>
-                                    <TextField
-                                        id="item_list_service"
-                                        name="item_list_service"
-                                        label="Cod. Lista de Serviço"
+                                    <InputLabel>ISS Retido</InputLabel>
+                                    <Select
+                                        label="ISS Retido"
+                                        id="iss_retained"
+                                        name="iss_retained"
+                                        value={formik.values.iss_retained}
+                                        onChange={formik.handleChange}
+                                        fullWidth
                                         size="small"
-                                        value={formik.values.item_list_service}
+                                    >
+                                        <MenuItem value="false">Não</MenuItem>
+                                        <MenuItem value="true">Sim</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Stack>
+                        </Grid>
+                        <Grid item xl={3} lg={3} md={3} sm={12} xs={12}>
+                            <Stack sx={{ width: '100%' }} spacing={2}>
+                                <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                    <TextField
+                                        id="municipal_registration"
+                                        name="municipal_registration"
+                                        label="Insc. Municipal"
+                                        size="small"
+                                        value={formik.values.municipal_registration}
                                         onChange={formik.handleChange}
                                         fullWidth
                                         autoFocus
@@ -364,15 +384,15 @@ export const CompanyDetails = () => {
                                 </FormControl>
                             </Stack>
                         </Grid>
-                        <Grid item xl={3} lg={3} md={3} sm={12} xs={12}>
+                        <Grid item xl={6} lg={6} md={6} sm={12} xs={12}>
                             <Stack sx={{ width: '100%' }} spacing={2}>
-                                <FormControl sx={{ m: 1, minWidth: 100 }}>
+                                <FormControl sx={{ m: 1, minWidth: 200 }}>
                                     <TextField
-                                        id="municipal_tax_code"
-                                        name="municipal_tax_code"
-                                        label="Cód. Trib. do Municipio"
+                                        id="api_nfes_token"
+                                        name="api_nfes_token"
+                                        label="API Token"
                                         size="small"
-                                        value={formik.values.municipal_tax_code}
+                                        value={formik.values.api_nfes_token}
                                         onChange={formik.handleChange}
                                         fullWidth
                                         autoFocus
